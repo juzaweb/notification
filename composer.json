@@ -1,0 +1,31 @@
+{
+    "name": "juzaweb/notification",
+    "description": "Mymo CMS",
+    "keywords": [],
+    "license": "MIT",
+    "homepage": "https://cms.juzaweb.com",
+    "require": {
+        "php": "^7.2.5|^8.0"
+    },
+    "require-dev": {
+      "laravel/laravel": "^6.0 | ^7.0 | ^8.0",
+      "phpunit/phpunit": "6.0 | 7.0 | 7.5 | 8.4 | ^8.5"
+    },
+    "autoload": {
+        "psr-4": {
+          "Juzaweb\\Notification\\Tests\\": "tests/",
+          "Juzaweb\\Notification\\": "src/"
+        }
+    },
+    "extra": {
+      "laravel": {
+        "providers": [
+          "Juzaweb\\Notification\\Providers\\NotificationServiceProvider"
+        ]
+      },
+      "juzaweb": {
+        "name": "Notification",
+        "domain": "juno"
+      }
+    }
+}
