@@ -1,9 +1,13 @@
 {
     "name": "juzaweb/notification",
-    "description": "Mymo CMS",
-    "keywords": [],
+    "description": "Notification plugin for Juzaweb cms",
+    "keywords": [
+      "notification",
+      "juzaweb cms",
+      "juzaweb.com"
+    ],
     "license": "MIT",
-    "homepage": "https://cms.juzaweb.com",
+    "homepage": "https://juzaweb.com/cms",
     "require": {
         "php": "^7.2.5|^8.0"
     },
@@ -25,7 +29,8 @@
       },
       "juzaweb": {
         "name": "Notification",
-        "domain": "juno"
+        "domain": "juno",
+        "cms_min": "1.0.9"
       }
     }
 }
