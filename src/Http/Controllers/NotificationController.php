@@ -3,15 +3,14 @@
 namespace Juzaweb\Notification\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use Juzaweb\Backend\Http\Controllers\Backend\PageController;
 use Juzaweb\Notification\Http\Datatable\NotificationDatatable;
 use Juzaweb\Notification\Http\Requests\NotificationRequest;
-use Juzaweb\Http\Controllers\BackendController;
-use Juzaweb\Models\User;
-use Juzaweb\Notification\Models\ManualNotification;
-use Juzaweb\Traits\ResourceController;
+use Juzaweb\CMS\Models\User;
+use Juzaweb\Backend\Models\ManualNotification;
+use Juzaweb\CMS\Traits\ResourceController;
 
-class NotificationController extends BackendController
+class NotificationController extends PageController
 {
     use ResourceController {
         getDataForForm as DataForForm;
@@ -19,35 +18,36 @@ class NotificationController extends BackendController
 
     protected $viewPrefix = 'juno::notification';
 
-    protected function getDataTable()
+    protected function getDataTable(...$params)
     {
         $dataTable = new NotificationDatatable();
         return $dataTable;
     }
     
-    public function create()
+    public function create(...$params)
     {
         $this->addBreadcrumb([
-            'title' => trans('juzaweb::app.notification'),
+            'title' => trans('cms::app.notification'),
             'url' => route('admin.notification.index')
         ]);
 
         $model = new ManualNotification();
         $vias = $this->getVias();
         return view('juno::notification.form', [
-            'title' => trans('juzaweb::app.add_new'),
+            'title' => trans('cms::app.add_new'),
             'model' => $model,
             'vias' => $vias,
         ]);
     }
 
-    public function edit($id)
+    public function edit(...$params)
     {
         $this->addBreadcrumb([
-            'title' => trans('juzaweb::app.notifications'),
+            'title' => trans('cms::app.notifications'),
             'url' => route('admin.notification.index')
         ]);
 
+        $id = $params[0];
         $vias = $this->getVias();
         $model = ManualNotification::findOrFail($id);
         $users = User::whereIn('id', explode(',', $model->users))
@@ -61,7 +61,7 @@ class NotificationController extends BackendController
         ]);
     }
     
-    public function store(NotificationRequest $request)
+    public function store(NotificationRequest $request, ...$params)
     {
         $via = $request->post('via');
         $via = implode(',', $via);
@@ -78,18 +78,20 @@ class NotificationController extends BackendController
             $model->setAttribute('users', $users);
             $model->save();
             DB::commit();
-        } catch (\Exception $exception) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            return $this->error($exception->getMessage());
+            throw $e;
         }
 
-        return $this->success(
-            trans('juzaweb::app.saved_successfully')
-        );
+        return $this->success([
+            'message' => trans('cms::app.saved_successfully'),
+            'redirect' => action([static::class, 'index'])
+        ]);
     }
 
-    public function update(NotificationRequest $request, $id)
+    public function update(NotificationRequest $request, ...$params)
     {
+        $id = $params[0];
         $via = $request->post('via');
         $via = implode(',', $via);
 
@@ -104,56 +106,39 @@ class NotificationController extends BackendController
             $model->setAttribute('users', $users);
             $model->save();
             DB::commit();
-        } catch (\Exception $exception) {
+        } catch (\Exception $e) {
             DB::rollBack();
-            return $this->error($exception->getMessage());
+            throw $e;
         }
 
         return $this->success([
-            'message' => trans('juzaweb::app.save_successfully')
+            'message' => trans('cms::app.save_successfully'),
+            'redirect' => action([static::class, 'index'])
         ]);
     }
 
     protected function getVias()
     {
-        $vias = collect(get_config('notification_used', []));
+        $vias = collect(config('notification.via', []));
         return $vias;
     }
 
-    /**
-     * Validator for store and update
-     *
-     * @param array $attributes
-     * @return Validator|array
-     */
-    protected function validator(array $attributes)
+    protected function validator(array $attributes, ...$params)
     {
         return [];
     }
 
-    /**
-     * Get model resource
-     *
-     * @param array $params
-     * @return string // namespace model
-     */
-    protected function getModel()
+    protected function getModel(...$params)
     {
         return ManualNotification::class;
     }
 
-    /**
-     * Get title resource
-     *
-     * @param array $params
-     * @return string
-     */
-    protected function getTitle()
+    protected function getTitle(...$params)
     {
-        return trans('juzaweb::app.notifications');
+        return trans('cms::app.notifications');
     }
 
-    protected function getDataForForm($model)
+    protected function getDataForForm($model, ...$params)
     {
         $data = $this->DataForForm($model);
         $data['vias'] = $this->getVias();

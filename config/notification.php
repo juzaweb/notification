@@ -6,10 +6,6 @@
  * @author     The Anh Dang <dangtheanh16@gmail.com>
  * @link       https://github.com/mymocms/mymocms
  * @license    MIT
- *
- * Created by The Anh.
- * Date: 8/9/2021
- * Time: 7:53 PM
  */
 
 return [
@@ -18,7 +14,7 @@ return [
      *
      * Support: sync, queue, cron
      * Default: sync
-     * */
+     */
     'method' => 'sync',
 
     /**

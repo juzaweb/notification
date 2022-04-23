@@ -2,42 +2,22 @@
 
 namespace Juzaweb\Notification\Providers;
 
-use Illuminate\Console\Scheduling\Schedule;
-use Juzaweb\Notification\Actions\MainAction;
-use Juzaweb\Support\ServiceProvider;
-use Juzaweb\Notification\Commands\SendNotify;
-use Juzaweb\Notification\Notification;
-use Juzaweb\Notification\Notifications\DatabaseNotification;
-use Juzaweb\Notification\Notifications\EmailNotification;
+use Juzaweb\CMS\Facades\ActionRegister;
+use Juzaweb\Notification\NotificationAction;
+use Juzaweb\CMS\Support\ServiceProvider;
 
 class NotificationServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        $this->bootCommands();
-        Notification::register('database', DatabaseNotification::class);
-        Notification::register('mail', EmailNotification::class);
-
-        $this->registerAction([
-            MainAction::class
-        ]);
+        ActionRegister::register(NotificationAction::class);
+        
+        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'juno');
     }
 
     public function register()
     {
-        $this->registerCommands();
-    }
-
-    protected function bootCommands()
-    {
-        $schedule = $this->app->make(Schedule::class);
-        $schedule->command('notify:send')->everyMinute();
-    }
-
-    protected function registerCommands()
-    {
-        $this->commands([
-            SendNotify::class,
-        ]);
+        $this->app->register(RouteServiceProvider::class);
+        $this->app->register(ConsoleServiceProvider::class);
     }
 }

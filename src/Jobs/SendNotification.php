@@ -7,21 +7,27 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Juzaweb\Notification\Models\ManualNotification;
-use Juzaweb\Notification\SendNotification as TadNotification;
+use Juzaweb\Backend\Models\ManualNotification;
+use Juzaweb\CMS\Support\SendNotification as TadNotification;
 
 class SendNotification implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable,
+        InteractsWithQueue,
+        Queueable,
+        SerializesModels;
 
     protected $notification;
+
+    public $timeout = 3600;
+
     /**
      * Create a new job instance.
      *
      * @param ManualNotification $notification
      * @return void
      */
-    public function __construct($notification)
+    public function __construct(ManualNotification $notification)
     {
         $this->notification = $notification;
     }

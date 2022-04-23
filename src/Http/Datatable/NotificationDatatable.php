@@ -4,42 +4,37 @@ namespace Juzaweb\Notification\Http\Datatable;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
-use Juzaweb\Abstracts\DataTable;
-use Juzaweb\Notification\Models\ManualNotification;
-use Juzaweb\Notification\SendNotification;
+use Juzaweb\CMS\Abstracts\DataTable;
+use Juzaweb\Backend\Models\ManualNotification;
+use Juzaweb\CMS\Support\SendNotification;
 use Juzaweb\Notification\Jobs\SendNotification as SendNotificationJob;
 
 class NotificationDatatable extends DataTable
 {
-    /**
-     * Columns datatable
-     *
-     * @return array
-     */
     public function columns()
     {
         return [
             'subject' => [
-                'label' => trans('juzaweb::app.subject'),
+                'label' => trans('cms::app.subject'),
                 'formatter' => [$this, 'rowActionsFormatter'],
             ],
             'method' => [
-                'label' => trans('juzaweb::app.via'),
+                'label' => trans('cms::app.via'),
                 'width' => '15%',
                 'formatter' => function ($value, $row, $index) {
                     if ($row->method) {
                         return $row->method;
                     }
 
-                    return trans('juzaweb::app.all');
+                    return trans('cms::app.all');
                 }
             ],
             'error' => [
-                'label' => trans('juzaweb::app.error'),
+                'label' => trans('cms::app.error'),
                 'width' => '20%',
             ],
             'created_at' => [
-                'label' => trans('juzaweb::app.created_at'),
+                'label' => trans('cms::app.created_at'),
                 'width' => '15%',
                 'align' => 'center',
                 'formatter' => function ($value, $row, $index) {
@@ -47,27 +42,42 @@ class NotificationDatatable extends DataTable
                 }
             ],
             'status' => [
-                'label' => trans('juzaweb::app.status'),
+                'label' => trans('cms::app.status'),
                 'width' => '15%',
                 'formatter' => function ($value, $row, $index) {
                     switch ($value) {
-                        case 0: return trans('juzaweb::app.error');
-                        case 1: return trans('juzaweb::app.sended');
-                        case 2: return trans('juzaweb::app.pending');
-                        case 3: return trans('juzaweb::app.sending');
-                        case 4: return trans('juzaweb::app.unsent');
+                        case 0:
+                            return trans('cms::app.error');
+                        case 1:
+                            return trans('cms::app.sended');
+                        case 2:
+                            return trans('cms::app.pending');
+                        case 3:
+                            return trans('cms::app.sending');
+                        case 4:
+                            return trans('cms::app.unsent');
                     }
+
+                    return '';
                 }
             ]
         ];
     }
 
-    /**
-     * Query data datatable
-     *
-     * @param array $data
-     * @return Builder
-     */
+    public function rowActionsFormatter($value, $row, $index)
+    {
+        return view(
+            'cms::backend.items.datatable_item',
+            [
+                'value' => $row->data['subject'],
+                'row' => $row,
+                'actions' => $this->rowAction($row),
+                'editUrl' => $this->currentUrl .'/'. $row->id . '/edit',
+            ]
+        )
+            ->render();
+    }
+
     public function query($data)
     {
         $query = ManualNotification::query();
@@ -87,6 +97,14 @@ class NotificationDatatable extends DataTable
         return $query;
     }
 
+    public function actions()
+    {
+        return [
+            'send' => trans('cms::app.send'),
+            'delete' => trans('cms::app.delete'),
+        ];
+    }
+
     public function bulkActions($action, $ids)
     {
         switch ($action) {
@@ -99,7 +117,8 @@ class NotificationDatatable extends DataTable
                         'status' => 2
                     ]);
 
-                $useMethod = config('juzaweb.notification.method');
+                $useMethod = config('notification.method');
+
                 if (in_array($useMethod, ['sync', 'queue'])) {
                     foreach ($ids as $id) {
                         $notification = ManualNotification::find($id);
@@ -112,7 +131,9 @@ class NotificationDatatable extends DataTable
                                 (new SendNotification($notification))->send();
                                 break;
                             case 'queue':
-                                SendNotificationJob::dispatch($notification);
+                                SendNotificationJob::dispatch(
+                                    $notification
+                                );
                                 break;
                         }
                     }

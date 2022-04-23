@@ -3,26 +3,27 @@
 namespace Juzaweb\Notification\Commands;
 
 use Illuminate\Console\Command;
-use Juzaweb\Notification\Models\ManualNotification;
-use Juzaweb\Notification\SendNotification;
+use Juzaweb\Backend\Models\ManualNotification;
+use Juzaweb\Backend\SendNotification;
 
 class SendNotify extends Command
 {
     protected $signature = 'notify:send';
     
-    protected $description = 'Send notify command';
-    
+    protected $limit = 5;
+
     public function handle()
     {
-        if (config('mymo.notification.method') != 'cron') {
+        if (config('notification.method') != 'cron') {
             return;
         }
 
-        $limit = 3;
         $count = 0;
-        while ($count < $limit) {
-            $notification = ManualNotification::where('status', '=', 2)
+        while ($count < $this->limit) {
+            $notification = ManualNotification::withoutGlobalScopes()
+                ->where('status', '=', 2)
                 ->first();
+
             if (empty($notification)) {
                 break;
             }
