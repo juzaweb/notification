@@ -9,7 +9,7 @@ class NotificationAction extends Action
 {
     public function handle()
     {
-        $this->addAction(Action::BACKEND_CALL_ACTION, [$this, 'addAdminMenus']);
+        $this->addAction(Action::BACKEND_INIT, [$this, 'addAdminMenus']);
     }
 
     public function addAdminMenus()
