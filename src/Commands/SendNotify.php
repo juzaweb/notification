@@ -4,13 +4,13 @@ namespace Juzaweb\Notification\Commands;
 
 use Illuminate\Console\Command;
 use Juzaweb\Backend\Models\ManualNotification;
-use Juzaweb\Backend\SendNotification;
+use Juzaweb\CMS\Support\SendNotification;
 
 class SendNotify extends Command
 {
     protected $signature = 'notify:send';
-    
-    protected $limit = 5;
+
+    protected int $limit = 5;
 
     public function handle()
     {
