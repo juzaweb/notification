@@ -2,6 +2,7 @@
 
 namespace Juzaweb\Notification\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Juzaweb\Backend\Http\Controllers\Backend\PageController;
 use Juzaweb\Notification\Http\Datatable\NotificationDatatable;
@@ -23,7 +24,7 @@ class NotificationController extends PageController
         $dataTable = new NotificationDatatable();
         return $dataTable;
     }
-    
+
     public function create(...$params)
     {
         $this->addBreadcrumb([
@@ -60,7 +61,7 @@ class NotificationController extends PageController
             'vias' => $vias,
         ]);
     }
-    
+
     public function store(NotificationRequest $request, ...$params)
     {
         $via = $request->post('via');
@@ -138,7 +139,7 @@ class NotificationController extends PageController
         return trans('cms::app.notifications');
     }
 
-    protected function getDataForForm($model, ...$params)
+    protected function getDataForForm(Model $model, ...$params)
     {
         $data = $this->DataForForm($model);
         $data['vias'] = $this->getVias();
