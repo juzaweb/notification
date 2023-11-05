@@ -1,7 +1,13 @@
 {
     "name": "juzaweb/notification",
+    "type": "juzaweb-plugin",
     "description": "Notification plugin for Juzaweb cms",
-    "keywords": [],
+    "keywords": [
+        "juzaweb",
+        "notification",
+        "cms",
+        "plugin"
+    ],
     "license": "MIT",
     "homepage": "https://juzaweb.com",
     "require": {
@@ -9,25 +15,22 @@
     },
     "require-dev": {
         "laravel/laravel": "^6.0 | ^7.0 | ^8.0",
-        "phpunit/phpunit": "6.0 | 7.0 | 7.5 | 8.4 | ^8.5"
+        "phpunit/phpunit": "6.0 | 7.0 | 7.5 | 8.4 | ^8.5",
+        "juzaweb/modules": "^1.0",
+        "juzaweb/dev-tool": "^1.0"
     },
     "autoload": {
         "psr-4": {
-            "Juzaweb\\Notification\\Tests\\": "tests/",
             "Juzaweb\\Notification\\": "src/"
         }
     },
     "extra": {
-        "laravel": {
-            "providers": [
-                "Juzaweb\\Notification\\Providers\\NotificationServiceProvider"
-            ]
-        },
         "juzaweb": {
             "name": "Notification",
             "domain": "juno",
-            "cms_min": "3.0",
-            "version": "1.0.1"
+            "providers": [
+                "Juzaweb\\Notification\\Providers\\NotificationServiceProvider"
+            ]
         }
     }
 }

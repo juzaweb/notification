@@ -8,16 +8,13 @@ use Juzaweb\CMS\Support\ServiceProvider;
 
 class NotificationServiceProvider extends ServiceProvider
 {
-    public function boot()
+    public function boot(): void
     {
-        ActionRegister::register(NotificationAction::class);
-        
-        $this->loadViewsFrom(__DIR__ . '/../resources/views', 'juno');
+        ActionRegister::register([NotificationAction::class]);
     }
 
-    public function register()
+    public function register(): void
     {
-        $this->app->register(RouteServiceProvider::class);
-        $this->app->register(ConsoleServiceProvider::class);
+        //
     }
 }

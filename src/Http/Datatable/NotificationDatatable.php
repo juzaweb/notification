@@ -2,6 +2,7 @@
 
 namespace Juzaweb\Notification\Http\Datatable;
 
+use Illuminate\Contracts\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
 use Juzaweb\CMS\Abstracts\DataTable;
@@ -11,7 +12,7 @@ use Juzaweb\Notification\Jobs\SendNotification as SendNotificationJob;
 
 class NotificationDatatable extends DataTable
 {
-    public function columns()
+    public function columns(): array
     {
         return [
             'subject' => [
@@ -64,7 +65,7 @@ class NotificationDatatable extends DataTable
         ];
     }
 
-    public function rowActionsFormatter($value, $row, $index)
+    public function rowActionsFormatter($value, $row, $index): string
     {
         return view(
             'cms::backend.items.datatable_item',
@@ -78,26 +79,26 @@ class NotificationDatatable extends DataTable
             ->render();
     }
 
-    public function query($data)
+    public function query($data): QueryBuilder
     {
         $query = ManualNotification::query();
         if ($keyword = Arr::get($data, 'keyword')) {
-            $query->where(function (Builder $q) use ($keyword) {
-                $q->orWhere('name', 'like', '%'. $keyword .'%');
-                $q->orWhere('subject', 'like', '%'. $keyword .'%');
-            });
+            $query->where(
+                function (Builder $q) use ($keyword) {
+                    $q->orWhere('name', 'like', '%'. $keyword .'%');
+                    $q->orWhere('subject', 'like', '%'. $keyword .'%');
+                }
+            );
         }
 
         if ($status = Arr::get($data, 'status')) {
-            if (!is_null($status)) {
-                $query->where('status', '=', $status);
-            }
+            $query->where('status', '=', $status);
         }
 
         return $query;
     }
 
-    public function actions()
+    public function actions(): array
     {
         return [
             'send' => trans('cms::app.send'),
@@ -105,17 +106,14 @@ class NotificationDatatable extends DataTable
         ];
     }
 
-    public function bulkActions($action, $ids)
+    public function bulkActions($action, $ids): void
     {
         switch ($action) {
             case 'delete':
                 ManualNotification::destroy($ids);
                 break;
             case 'send':
-                ManualNotification::whereIn('id', $ids)
-                    ->update([
-                        'status' => 2
-                    ]);
+                ManualNotification::whereIn('id', $ids)->update(['status' => 2]);
 
                 $useMethod = config('notification.method');
 
