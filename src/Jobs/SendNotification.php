@@ -17,9 +17,9 @@ class SendNotification implements ShouldQueue
         Queueable,
         SerializesModels;
 
-    protected $notification;
+    protected ManualNotification $notification;
 
-    public $timeout = 3600;
+    public int $timeout = 3600;
 
     /**
      * Create a new job instance.
@@ -38,7 +38,7 @@ class SendNotification implements ShouldQueue
      * @return void
      * @throws \Exception
      */
-    public function handle()
+    public function handle(): void
     {
         (new TadNotification($this->notification))->send();
     }

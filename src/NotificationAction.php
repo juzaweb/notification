@@ -7,12 +7,12 @@ use Juzaweb\CMS\Facades\HookAction;
 
 class NotificationAction extends Action
 {
-    public function handle()
+    public function handle(): void
     {
         $this->addAction(Action::BACKEND_INIT, [$this, 'addAdminMenus']);
     }
 
-    public function addAdminMenus()
+    public function addAdminMenus(): void
     {
         HookAction::registerAdminPage(
             'notification',

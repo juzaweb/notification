@@ -2,9 +2,17 @@
 
 namespace Juzaweb\Notification\Http\Controllers;
 
+use Exception;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Juzaweb\Backend\Http\Controllers\Backend\PageController;
+use Juzaweb\CMS\Abstracts\DataTable;
 use Juzaweb\Notification\Http\Datatable\NotificationDatatable;
 use Juzaweb\Notification\Http\Requests\NotificationRequest;
 use Juzaweb\CMS\Models\User;
@@ -17,36 +25,42 @@ class NotificationController extends PageController
         getDataForForm as DataForForm;
     }
 
-    protected $viewPrefix = 'juno::notification';
+    protected string $viewPrefix = 'juno::notification';
 
-    protected function getDataTable(...$params)
+    protected function getDataTable(...$params): DataTable
     {
-        $dataTable = new NotificationDatatable();
-        return $dataTable;
+        return app()->make(NotificationDatatable::class);
     }
 
-    public function create(...$params)
+    public function create(...$params): Factory|View
     {
-        $this->addBreadcrumb([
-            'title' => trans('cms::app.notification'),
-            'url' => route('admin.notification.index')
-        ]);
+        $this->addBreadcrumb(
+            [
+                'title' => trans('cms::app.notification'),
+                'url' => route('admin.notification.index'),
+            ]
+        );
 
         $model = new ManualNotification();
         $vias = $this->getVias();
-        return view('juno::notification.form', [
-            'title' => trans('cms::app.add_new'),
-            'model' => $model,
-            'vias' => $vias,
-        ]);
+        return view(
+            'juno::notification.form',
+            [
+                'title' => trans('cms::app.add_new'),
+                'model' => $model,
+                'vias' => $vias,
+            ]
+        );
     }
 
-    public function edit(...$params)
+    public function edit(...$params): Factory|View
     {
-        $this->addBreadcrumb([
-            'title' => trans('cms::app.notifications'),
-            'url' => route('admin.notification.index')
-        ]);
+        $this->addBreadcrumb(
+            [
+                'title' => trans('cms::app.notifications'),
+                'url' => route('admin.notification.index'),
+            ]
+        );
 
         $id = $params[0];
         $vias = $this->getVias();
@@ -54,15 +68,18 @@ class NotificationController extends PageController
         $users = User::whereIn('id', explode(',', $model->users))
             ->get(['id', 'name']);
 
-        return view('juno::notification.form', [
-            'title' => $model->data['subject'] ?? '',
-            'model' => $model,
-            'users' => $users,
-            'vias' => $vias,
-        ]);
+        return view(
+            'juno::notification.form',
+            [
+                'title' => $model->data['subject'] ?? '',
+                'model' => $model,
+                'users' => $users,
+                'vias' => $vias,
+            ]
+        );
     }
 
-    public function store(NotificationRequest $request, ...$params)
+    public function store(NotificationRequest $request, ...$params): JsonResponse|RedirectResponse
     {
         $via = $request->post('via');
         $via = implode(',', $via);
@@ -79,18 +96,20 @@ class NotificationController extends PageController
             $model->setAttribute('users', $users);
             $model->save();
             DB::commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
 
-        return $this->success([
-            'message' => trans('cms::app.saved_successfully'),
-            'redirect' => action([static::class, 'index'])
-        ]);
+        return $this->success(
+            [
+                'message' => trans('cms::app.saved_successfully'),
+                'redirect' => action([static::class, 'index']),
+            ]
+        );
     }
 
-    public function update(NotificationRequest $request, ...$params)
+    public function update(NotificationRequest $request, ...$params): JsonResponse|RedirectResponse
     {
         $id = $params[0];
         $via = $request->post('via');
@@ -107,39 +126,40 @@ class NotificationController extends PageController
             $model->setAttribute('users', $users);
             $model->save();
             DB::commit();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
 
-        return $this->success([
+        return $this->success(
+            [
             'message' => trans('cms::app.save_successfully'),
             'redirect' => action([static::class, 'index'])
-        ]);
+            ]
+        );
     }
 
-    protected function getVias()
+    protected function getVias(): Collection
     {
-        $vias = collect(config('notification.via', []));
-        return $vias;
+        return collect(config('notification.via', []));
     }
 
-    protected function validator(array $attributes, ...$params)
+    protected function validator(array $attributes, ...$params): Validator|array
     {
         return [];
     }
 
-    protected function getModel(...$params)
+    protected function getModel(...$params): string
     {
         return ManualNotification::class;
     }
 
-    protected function getTitle(...$params)
+    protected function getTitle(...$params): string
     {
         return trans('cms::app.notifications');
     }
 
-    protected function getDataForForm(Model $model, ...$params)
+    protected function getDataForForm(Model $model, ...$params): array
     {
         $data = $this->DataForForm($model);
         $data['vias'] = $this->getVias();
