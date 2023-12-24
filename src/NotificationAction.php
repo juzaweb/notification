@@ -13,13 +13,33 @@ class NotificationAction extends Action
 
     public function addAdminMenus(): void
     {
+        $this->addAdminMenu(
+            trans('cms::app.notifications'),
+            'notification',
+            [
+                'icon' => 'fa fa-bell',
+                'position' => 100,
+            ]
+        );
+
         $this->registerAdminPage(
             'notification',
             [
                 'title' => trans('cms::app.notifications'),
                 'menu' => [
                     'icon' => 'fa fa-bell',
-                    'position' => 100
+                    'parent' => 'notification',
+                ]
+            ]
+        );
+
+        $this->hookAction->registerAdminPage(
+            'subscribes',
+            [
+                'title' => __('Subscribes'),
+                'menu' => [
+                    'parent' => 'notification',
+                    'icon' => 'fa fa-users',
                 ]
             ]
         );
