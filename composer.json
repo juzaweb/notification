@@ -14,8 +14,6 @@
         "php": "^8.0|^8.1"
     },
     "require-dev": {
-        "laravel/laravel": "^6.0 | ^7.0 | ^8.0",
-        "phpunit/phpunit": "6.0 | 7.0 | 7.5 | 8.4 | ^8.5",
         "juzaweb/modules": "^1.0",
         "juzaweb/dev-tool": "^1.0"
     },
@@ -27,7 +25,8 @@
     "extra": {
         "juzaweb": {
             "name": "Notification",
-            "domain": "juno",
+            "domain": "jw_notification",
+            "networkable": true,
             "providers": [
                 "Juzaweb\\Notification\\Providers\\NotificationServiceProvider"
             ]

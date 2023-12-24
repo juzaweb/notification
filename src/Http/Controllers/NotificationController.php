@@ -25,7 +25,7 @@ class NotificationController extends PageController
         getDataForForm as DataForForm;
     }
 
-    protected string $viewPrefix = 'juno::notification';
+    protected string $viewPrefix = 'jw_notification::notification';
 
     protected function getDataTable(...$params): DataTable
     {
@@ -36,7 +36,7 @@ class NotificationController extends PageController
     {
         $this->addBreadcrumb(
             [
-                'title' => trans('cms::app.notification'),
+                'title' => trans('cms::app.notifications'),
                 'url' => route('admin.notification.index'),
             ]
         );
@@ -44,7 +44,7 @@ class NotificationController extends PageController
         $model = new ManualNotification();
         $vias = $this->getVias();
         return view(
-            'juno::notification.form',
+            'jw_notification::notification.form',
             [
                 'title' => trans('cms::app.add_new'),
                 'model' => $model,
@@ -69,7 +69,7 @@ class NotificationController extends PageController
             ->get(['id', 'name']);
 
         return view(
-            'juno::notification.form',
+            'jw_notification::notification.form',
             [
                 'title' => $model->data['subject'] ?? '',
                 'model' => $model,
@@ -141,7 +141,7 @@ class NotificationController extends PageController
 
     protected function getVias(): Collection
     {
-        return collect(config('notification.via', []));
+        return collect(config('juzaweb.notification.via', []));
     }
 
     protected function validator(array $attributes, ...$params): Validator|array

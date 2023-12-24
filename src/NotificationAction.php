@@ -3,7 +3,6 @@
 namespace Juzaweb\Notification;
 
 use Juzaweb\CMS\Abstracts\Action;
-use Juzaweb\CMS\Facades\HookAction;
 
 class NotificationAction extends Action
 {
@@ -14,7 +13,7 @@ class NotificationAction extends Action
 
     public function addAdminMenus(): void
     {
-        HookAction::registerAdminPage(
+        $this->registerAdminPage(
             'notification',
             [
                 'title' => trans('cms::app.notifications'),
