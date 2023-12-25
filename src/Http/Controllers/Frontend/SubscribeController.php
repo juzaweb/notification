@@ -27,7 +27,7 @@ class SubscribeController extends FrontendController
             'send-subscribe',
             3,
             function () use ($request) {
-                $this->subscribeRepository->create($request->safe()->only(['email']));
+                $this->subscribeRepository->create($request->safe()->only(['email', 'name']));
             }
         );
 

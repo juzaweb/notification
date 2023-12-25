@@ -18,8 +18,8 @@ class SubscribeRequest extends FormRequest
     {
         return [
             'email' => [
-                'required,email:rfc,dns',
-                'unique:users,email'
+                'required',
+                'email:rfc,dns',
             ],
         ];
     }

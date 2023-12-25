@@ -17,8 +17,9 @@ return new class extends Migration {
             function (Blueprint $table) {
                 $table->bigIncrements('id');
                 $table->string('name')->nullable();
-                $table->string('email')->unique();
+                $table->string('email')->index();
                 $table->unsignedBigInteger('site_id')->default(0)->index();
+                $table->unique(['email', 'site_id']);
                 $table->timestamps();
             }
         );

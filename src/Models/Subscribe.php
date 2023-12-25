@@ -15,4 +15,9 @@ class Subscribe extends Model
         'name',
         'email',
     ];
+
+    public function getFieldName(): string
+    {
+        return 'email';
+    }
 }

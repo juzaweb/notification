@@ -12,6 +12,7 @@ namespace Juzaweb\Notification\Http\Controllers\Backend;
 
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Juzaweb\Backend\Http\Controllers\Backend\PageController;
 use Juzaweb\CMS\Abstracts\DataTable;
 use Juzaweb\CMS\Traits\ResourceController;
@@ -34,7 +35,11 @@ class SubscribeController extends PageController
         return Validator::make(
             $attributes,
             [
-                // Rules
+                'email' => [
+                    'required',
+                    'email:rfc,dns',
+                    Rule::modelUnique(Subscribe::class, 'email'),
+                ],
             ]
         );
     }
