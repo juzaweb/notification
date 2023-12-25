@@ -133,8 +133,8 @@ class NotificationController extends PageController
 
         return $this->success(
             [
-            'message' => trans('cms::app.save_successfully'),
-            'redirect' => action([static::class, 'index'])
+                'message' => trans('cms::app.save_successfully'),
+                'redirect' => action([static::class, 'index'])
             ]
         );
     }

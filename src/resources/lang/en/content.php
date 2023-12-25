@@ -12,5 +12,7 @@ return [
     'name' => 'Name',
     'email' => 'Email',
     'user_id' => 'User id',
+    'add_subscribe' => 'Add Subscribe',
+    'subscribe' => 'Subscribe',
     'subscribes' => 'Subscribes',
 ];

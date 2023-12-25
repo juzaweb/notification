@@ -3,9 +3,9 @@
 namespace Juzaweb\Notification\Repositories;
 
 use Juzaweb\CMS\Repositories\BaseRepositoryEloquent;
-use Juzaweb\Notification\Models\JwNotificationSubscribe;
+use Juzaweb\Notification\Models\Subscribe;
 
-class JwNotificationSubscribeRepositoryEloquent extends BaseRepositoryEloquent implements JwNotificationSubscribeRepository
+class SubscribeRepositoryEloquent extends BaseRepositoryEloquent implements SubscribeRepository
 {
     /**
      * Specify Model class name
@@ -14,6 +14,6 @@ class JwNotificationSubscribeRepositoryEloquent extends BaseRepositoryEloquent i
      */
     public function model(): string
     {
-        return JwNotificationSubscribe::class;
+        return Subscribe::class;
     }
 }

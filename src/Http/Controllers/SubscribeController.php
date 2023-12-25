@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Validator;
 use Juzaweb\Backend\Http\Controllers\Backend\PageController;
 use Juzaweb\CMS\Abstracts\DataTable;
 use Juzaweb\CMS\Traits\ResourceController;
-use Juzaweb\Notification\Http\Datatable\JwNotificationSubscribeDatatable;
-use Juzaweb\Notification\Models\JwNotificationSubscribe;
+use Juzaweb\Notification\Http\Datatable\SubscribeDatatable;
+use Juzaweb\Notification\Models\Subscribe;
 
 class SubscribeController extends PageController
 {
@@ -26,7 +26,7 @@ class SubscribeController extends PageController
 
     protected function getDataTable(...$params): DataTable
     {
-        return new JwNotificationSubscribeDatatable();
+        return new SubscribeDatatable();
     }
 
     protected function validator(array $attributes, ...$params): ValidatorContract
@@ -41,11 +41,11 @@ class SubscribeController extends PageController
 
     protected function getModel(...$params): string
     {
-        return JwNotificationSubscribe::class;
+        return Subscribe::class;
     }
 
     protected function getTitle(...$params): string
     {
-        return trans('jw_notification::content.jw_notification_subscribe');
+        return trans('jw_notification::content.subscribes');
     }
 }

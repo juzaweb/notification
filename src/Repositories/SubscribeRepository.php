@@ -4,7 +4,7 @@ namespace Juzaweb\Notification\Repositories;
 
 use Juzaweb\CMS\Repositories\BaseRepository;
 
-interface JwNotificationSubscribeRepository extends BaseRepository
+interface SubscribeRepository extends BaseRepository
 {
     //
 }

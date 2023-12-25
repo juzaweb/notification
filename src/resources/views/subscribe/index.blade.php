@@ -2,15 +2,28 @@
 
 @section('content')
     <div class="row">
-        <div class="col-md-12">
-            <div class="btn-group float-right">
-                <a href="{{ $linkCreate }}" class="btn btn-success">
-                    <i class="fa fa-plus-circle"></i> {{ trans('cms::app.add_new') }}
-                </a>
-            </div>
+        <div class="col-md-4">
+            @component('cms::components.form', [
+
+            ])
+
+                <div class="row">
+                    <div class="col-md-12">
+
+                        {{ Field::text(trans('jw_notification::content.name'), 'name', []) }}
+
+                        {{ Field::text(trans('jw_notification::content.email'), 'email', []) }}
+
+                        <button type="submit" class="btn btn-success">{{ trans('jw_notification::content.add_subscribe') }}</button>
+                    </div>
+                </div>
+
+            @endcomponent
+        </div>
+
+        <div class="col-md-8">
+            {{ $dataTable->render() }}
         </div>
     </div>
-
-    {{ $dataTable->render() }}
 
 @endsection

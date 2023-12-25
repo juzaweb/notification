@@ -16,9 +16,9 @@ use Juzaweb\CMS\Abstracts\DataTable;
 use Juzaweb\CMS\Repositories\Criterias\FilterCriteria;
 use Juzaweb\CMS\Repositories\Criterias\SearchCriteria;
 use Juzaweb\CMS\Repositories\Criterias\SortCriteria;
-use Juzaweb\Notification\Repositories\JwNotificationSubscribeRepository;
+use Juzaweb\Notification\Repositories\SubscribeRepository;
 
-class JwNotificationSubscribeDatatable extends DataTable
+class SubscribeDatatable extends DataTable
 {
     /**
      * Columns datatable
@@ -28,18 +28,16 @@ class JwNotificationSubscribeDatatable extends DataTable
     public function columns(): array
     {
         return [
-            'name' => [
-                'label' => trans('jw_notification::content.name'),
-                'formatter' => [$this, 'rowActionsFormatter'],
-            ],
             'email' => [
                 'label' => trans('jw_notification::content.email'),
+                'formatter' => [$this, 'rowActionsFormatter'],
             ],
-            'user_id' => [
-                'label' => trans('jw_notification::content.user_id'),
+            'name' => [
+                'label' => trans('jw_notification::content.name'),
+                'width' => '25%',
             ],
             'created_at' => [
-                'label' => trans('cms::app.created_at'),
+                'label' => trans('Subscribed at'),
                 'width' => '15%',
                 'align' => 'center',
                 'formatter' => function ($value, $row, $index) {
@@ -58,7 +56,7 @@ class JwNotificationSubscribeDatatable extends DataTable
      */
     public function query(array $data): Builder
     {
-        return app()->make(JwNotificationSubscribeRepository::class)
+        return app()->make(SubscribeRepository::class)
             ->pushCriteria(new SearchCriteria($data))
             ->pushCriteria(new FilterCriteria($data))
             ->pushCriteria(new SortCriteria($data))
@@ -70,7 +68,7 @@ class JwNotificationSubscribeDatatable extends DataTable
         switch ($action) {
             case 'delete':
                 foreach ($ids as $id) {
-                    app(JwNotificationSubscribeRepository::class)->delete($id);
+                    app(SubscribeRepository::class)->delete($id);
                 }
                 break;
         }
