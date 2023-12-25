@@ -24,9 +24,9 @@ class SubscribeTest extends TestCase
         $faker = \Faker\Factory::create();
 
         $response = $this->post(
-            'ajax/subscribes',
+            'ajax/subscribe',
             [
-                'email' => $faker->email,
+                'email' => $faker->email(),
             ]
         );
 

@@ -50,7 +50,7 @@ class NotificationAction extends Action
     public function addFrontendAjaxs(): void
     {
         $this->registerFrontendAjax(
-            'subscribes',
+            'subscribe',
             [
                 'method' => 'POST',
                 'callback' => [SubscribeController::class, 'store'],
