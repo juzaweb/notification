@@ -1,7 +1,7 @@
 <?php
 
-use Juzaweb\Notification\Http\Controllers\SubscribeController;
-use Juzaweb\Notification\Http\Controllers\NotificationController;
+use Juzaweb\Notification\Http\Controllers\Backend\NotificationController;
+use Juzaweb\Notification\Http\Controllers\Backend\SubscribeController;
 
 Route::jwResource('notification', NotificationController::class);
 Route::jwResource('subscribes', SubscribeController::class);

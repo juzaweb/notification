@@ -8,7 +8,7 @@
  * @license    MIT
  */
 
-namespace Juzaweb\Notification\Http\Controllers;
+namespace Juzaweb\Notification\Http\Controllers\Backend;
 
 use Illuminate\Contracts\Validation\Validator as ValidatorContract;
 use Illuminate\Support\Facades\Validator;

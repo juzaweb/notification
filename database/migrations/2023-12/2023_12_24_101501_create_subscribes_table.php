@@ -18,7 +18,7 @@ return new class extends Migration {
                 $table->bigIncrements('id');
                 $table->string('name')->nullable();
                 $table->string('email')->unique();
-                $table->unsignedBigInteger('user_id')->nullable();
+                $table->unsignedBigInteger('site_id')->default(0)->index();
                 $table->timestamps();
             }
         );

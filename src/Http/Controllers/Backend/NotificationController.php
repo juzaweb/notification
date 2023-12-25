@@ -1,6 +1,6 @@
 <?php
 
-namespace Juzaweb\Notification\Http\Controllers;
+namespace Juzaweb\Notification\Http\Controllers\Backend;
 
 use Exception;
 use Illuminate\Contracts\Validation\Validator;
@@ -12,12 +12,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Juzaweb\Backend\Http\Controllers\Backend\PageController;
+use Juzaweb\Backend\Models\ManualNotification;
 use Juzaweb\CMS\Abstracts\DataTable;
+use Juzaweb\CMS\Models\User;
+use Juzaweb\CMS\Traits\ResourceController;
 use Juzaweb\Notification\Http\Datatable\NotificationDatatable;
 use Juzaweb\Notification\Http\Requests\NotificationRequest;
-use Juzaweb\CMS\Models\User;
-use Juzaweb\Backend\Models\ManualNotification;
-use Juzaweb\CMS\Traits\ResourceController;
 
 class NotificationController extends PageController
 {

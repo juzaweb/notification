@@ -3,12 +3,14 @@
 namespace Juzaweb\Notification;
 
 use Juzaweb\CMS\Abstracts\Action;
+use Juzaweb\Notification\Http\Controllers\Frontend\SubscribeController;
 
 class NotificationAction extends Action
 {
     public function handle(): void
     {
         $this->addAction(Action::BACKEND_INIT, [$this, 'addAdminMenus']);
+        $this->addAction(Action::FRONTEND_INIT, [$this, 'addFrontendAjaxs']);
     }
 
     public function addAdminMenus(): void
@@ -41,6 +43,17 @@ class NotificationAction extends Action
                     'parent' => 'notification',
                     'icon' => 'fa fa-users',
                 ]
+            ]
+        );
+    }
+
+    public function addFrontendAjaxs(): void
+    {
+        $this->registerFrontendAjax(
+            'subscribes',
+            [
+                'method' => 'POST',
+                'callback' => [SubscribeController::class, 'store'],
             ]
         );
     }
