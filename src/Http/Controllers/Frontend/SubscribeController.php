@@ -10,24 +10,28 @@
 
 namespace Juzaweb\Notification\Http\Controllers\Frontend;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Juzaweb\CMS\Http\Controllers\FrontendController;
-use Juzaweb\Notification\Http\Requests\SubscribeRequest;
+use Juzaweb\Notification\Http\Requests\EmailSubscribeRequest;
 use Illuminate\Support\Facades\RateLimiter;
-use Juzaweb\Notification\Repositories\SubscribeRepository;
+use Juzaweb\Notification\Repositories\EmailSubscribeRepository;
 
 class SubscribeController extends FrontendController
 {
-    public function __construct(protected SubscribeRepository $subscribeRepository)
+    public function __construct(protected EmailSubscribeRepository $subscribeRepository)
     {
     }
 
-    public function store(SubscribeRequest $request)
+    public function storeEmail(EmailSubscribeRequest $request): JsonResponse|RedirectResponse
     {
         $executed = RateLimiter::attempt(
-            'send-subscribe',
+            'email-subscribe',
             3,
             function () use ($request) {
-                $this->subscribeRepository->create($request->safe()->only(['email', 'name']));
+                $data = $request->safe()->merge(['active' => true])->toArray();
+
+                $this->subscribeRepository->create($data);
             }
         );
 

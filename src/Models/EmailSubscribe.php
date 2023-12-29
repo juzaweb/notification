@@ -4,16 +4,22 @@ namespace Juzaweb\Notification\Models;
 
 use Juzaweb\CMS\Models\Model;
 use Juzaweb\CMS\Traits\ResourceModel;
+use Juzaweb\CMS\Traits\UseUUIDColumn;
 
-class Subscribe extends Model
+class EmailSubscribe extends Model
 {
-    use ResourceModel;
+    use ResourceModel, UseUUIDColumn;
 
-    protected $table = 'jw_notification_subscribes';
+    protected $table = 'jw_notification_email_subscribes';
 
     protected $fillable = [
         'name',
         'email',
+        'active',
+    ];
+
+    protected $casts = [
+        'active' => 'boolean',
     ];
 
     public function getFieldName(): string

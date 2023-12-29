@@ -13,13 +13,16 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create(
-            'jw_notification_subscribes',
+            'jw_notification_email_subscribes',
             function (Blueprint $table) {
                 $table->bigIncrements('id');
+                $table->uuid();
                 $table->string('name')->nullable();
                 $table->string('email')->index();
                 $table->unsignedBigInteger('site_id')->default(0)->index();
                 $table->unique(['email', 'site_id']);
+                $table->unique(['uuid', 'site_id']);
+                $table->boolean('active')->default(false);
                 $table->timestamps();
             }
         );
@@ -32,6 +35,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('jw_notification_subscribes');
+        Schema::dropIfExists('jw_notification_email_subscribes');
     }
 };

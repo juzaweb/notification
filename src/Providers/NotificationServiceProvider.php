@@ -5,13 +5,13 @@ namespace Juzaweb\Notification\Providers;
 use Juzaweb\CMS\Facades\ActionRegister;
 use Juzaweb\Notification\NotificationAction;
 use Juzaweb\CMS\Support\ServiceProvider;
-use Juzaweb\Notification\Repositories\SubscribeRepository;
-use Juzaweb\Notification\Repositories\SubscribeRepositoryEloquent;
+use Juzaweb\Notification\Repositories\EmailSubscribeRepository;
+use Juzaweb\Notification\Repositories\EmailSubscribeRepositoryEloquent;
 
 class NotificationServiceProvider extends ServiceProvider
 {
     public array $bindings = [
-        SubscribeRepository::class => SubscribeRepositoryEloquent::class,
+        EmailSubscribeRepository::class => EmailSubscribeRepositoryEloquent::class,
     ];
 
     public function boot(): void

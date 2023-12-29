@@ -16,18 +16,18 @@ use Illuminate\Validation\Rule;
 use Juzaweb\Backend\Http\Controllers\Backend\PageController;
 use Juzaweb\CMS\Abstracts\DataTable;
 use Juzaweb\CMS\Traits\ResourceController;
-use Juzaweb\Notification\Http\Datatable\SubscribeDatatable;
-use Juzaweb\Notification\Models\Subscribe;
+use Juzaweb\Notification\Http\Datatable\EmailSubscribeDatatable;
+use Juzaweb\Notification\Models\EmailSubscribe;
 
 class SubscribeController extends PageController
 {
     use ResourceController;
 
-    protected string $viewPrefix = 'jw_notification::subscribe';
+    protected string $viewPrefix = 'jw_notification::email_subscribe';
 
     protected function getDataTable(...$params): DataTable
     {
-        return new SubscribeDatatable();
+        return new EmailSubscribeDatatable();
     }
 
     protected function validator(array $attributes, ...$params): ValidatorContract
@@ -38,7 +38,7 @@ class SubscribeController extends PageController
                 'email' => [
                     'required',
                     'email:rfc,dns',
-                    Rule::modelUnique(Subscribe::class, 'email'),
+                    Rule::modelUnique(EmailSubscribe::class, 'email'),
                 ],
             ]
         );
@@ -46,7 +46,7 @@ class SubscribeController extends PageController
 
     protected function getModel(...$params): string
     {
-        return Subscribe::class;
+        return EmailSubscribe::class;
     }
 
     protected function getTitle(...$params): string

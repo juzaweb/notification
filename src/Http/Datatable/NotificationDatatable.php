@@ -8,7 +8,7 @@ use Illuminate\Support\Arr;
 use Juzaweb\CMS\Abstracts\DataTable;
 use Juzaweb\Backend\Models\ManualNotification;
 use Juzaweb\CMS\Support\SendNotification;
-use Juzaweb\Notification\Jobs\SendNotification as SendNotificationJob;
+use Juzaweb\CMS\Jobs\SendNotification as SendNotificationJob;
 
 class NotificationDatatable extends DataTable
 {
@@ -30,10 +30,6 @@ class NotificationDatatable extends DataTable
                     return trans('cms::app.all');
                 }
             ],
-            'error' => [
-                'label' => trans('cms::app.error'),
-                'width' => '20%',
-            ],
             'created_at' => [
                 'label' => trans('cms::app.created_at'),
                 'width' => '15%',
@@ -46,20 +42,16 @@ class NotificationDatatable extends DataTable
                 'label' => trans('cms::app.status'),
                 'width' => '15%',
                 'formatter' => function ($value, $row, $index) {
-                    switch ($value) {
-                        case 0:
-                            return trans('cms::app.error');
-                        case 1:
-                            return trans('cms::app.sended');
-                        case 2:
-                            return trans('cms::app.pending');
-                        case 3:
-                            return trans('cms::app.sending');
-                        case 4:
-                            return trans('cms::app.unsent');
-                    }
+                    $status = match ($value) {
+                        0 => 'error',
+                        1 => 'sended',
+                        2 => 'pending',
+                        3 => 'sending',
+                        4 => 'unsent',
+                        default => '',
+                    };
 
-                    return '';
+                    return view('cms::components.datatable.status', ['status' => $status]);
                 }
             ]
         ];
@@ -81,7 +73,7 @@ class NotificationDatatable extends DataTable
 
     public function query($data): QueryBuilder
     {
-        $query = ManualNotification::query();
+        $query = ManualNotification::select(['method', 'data', 'created_at', 'status', 'id']);
         if ($keyword = Arr::get($data, 'keyword')) {
             $query->where(
                 function (Builder $q) use ($keyword) {
@@ -115,7 +107,7 @@ class NotificationDatatable extends DataTable
             case 'send':
                 ManualNotification::whereIn('id', $ids)->update(['status' => 2]);
 
-                $useMethod = config('notification.method');
+                $useMethod = config('juzaweb.notification.method');
 
                 if (in_array($useMethod, ['sync', 'queue'])) {
                     foreach ($ids as $id) {

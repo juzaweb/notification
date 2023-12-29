@@ -11,14 +11,16 @@
 namespace Juzaweb\Notification\Http\Datatable;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Juzaweb\CMS\Abstracts\DataTable;
 use Juzaweb\CMS\Repositories\Criterias\FilterCriteria;
 use Juzaweb\CMS\Repositories\Criterias\SearchCriteria;
 use Juzaweb\CMS\Repositories\Criterias\SortCriteria;
-use Juzaweb\Notification\Repositories\SubscribeRepository;
+use Juzaweb\Notification\Repositories\EmailSubscribeRepository;
 
-class SubscribeDatatable extends DataTable
+class EmailSubscribeDatatable extends DataTable
 {
     /**
      * Columns datatable
@@ -36,6 +38,11 @@ class SubscribeDatatable extends DataTable
                 'label' => trans('jw_notification::content.name'),
                 'width' => '25%',
             ],
+            'active' => [
+                'label' => trans('jw_notification::content.name'),
+                'width' => '15%',
+                'formatter' => [$this, 'activeFormatter'],
+            ],
             'created_at' => [
                 'label' => trans('Subscribed at'),
                 'width' => '15%',
@@ -47,6 +54,14 @@ class SubscribeDatatable extends DataTable
         ];
     }
 
+    public function actions(): array
+    {
+        $actions = parent::actions();
+        $actions['activate'] = trans('cms::app.activate');
+        $actions['inactivate'] = trans('cms::app.inactivate');
+        return $actions;
+    }
+
     /**
      * Query data datatable
      *
@@ -56,7 +71,7 @@ class SubscribeDatatable extends DataTable
      */
     public function query(array $data): Builder
     {
-        return app()->make(SubscribeRepository::class)
+        return app()->make(EmailSubscribeRepository::class)
             ->pushCriteria(new SearchCriteria($data))
             ->pushCriteria(new FilterCriteria($data))
             ->pushCriteria(new SortCriteria($data))
@@ -68,9 +83,20 @@ class SubscribeDatatable extends DataTable
         switch ($action) {
             case 'delete':
                 foreach ($ids as $id) {
-                    app(SubscribeRepository::class)->delete($id);
+                    app(EmailSubscribeRepository::class)->delete($id);
                 }
                 break;
+            case 'activate':
+                foreach ($ids as $id) {
+                    app(EmailSubscribeRepository::class)->update(['active' => true], $id);
+                }
         }
+    }
+
+    public function activeFormatter($value, $row, $index): Factory|View
+    {
+        $status = $row->active ? 'active' : 'inactive';
+
+        return view('cms::components.datatable.status', compact('status'));
     }
 }

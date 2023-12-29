@@ -22,6 +22,11 @@
             "Juzaweb\\Notification\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Juzaweb\\Notification\\Tests\\": "tests/"
+        }
+    },
     "extra": {
         "juzaweb": {
             "name": "Notification",
