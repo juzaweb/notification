@@ -15,4 +15,5 @@ return [
     'add_subscribe' => 'Add Subscribe',
     'subscribe' => 'Subscribe',
     'subscribes' => 'Subscribes',
+    'active' => 'Active',
 ];

@@ -1,4 +1,8 @@
 ### v1.0.3 
+* :+1: Subscribe email ajax
+* :+1: Subscribe ajax
+
+### v1.0.3 
 * :+1: Subscribe ajax
 
 ### v1.0.2 

@@ -39,7 +39,7 @@ class EmailSubscribeDatatable extends DataTable
                 'width' => '25%',
             ],
             'active' => [
-                'label' => trans('jw_notification::content.name'),
+                'label' => trans('jw_notification::content.active'),
                 'width' => '15%',
                 'formatter' => [$this, 'activeFormatter'],
             ],
@@ -57,8 +57,8 @@ class EmailSubscribeDatatable extends DataTable
     public function actions(): array
     {
         $actions = parent::actions();
-        $actions['activate'] = trans('cms::app.activate');
-        $actions['inactivate'] = trans('cms::app.inactivate');
+        $actions['active'] = trans('cms::app.active');
+        $actions['inactive'] = trans('cms::app.inactive');
         return $actions;
     }
 
@@ -86,9 +86,14 @@ class EmailSubscribeDatatable extends DataTable
                     app(EmailSubscribeRepository::class)->delete($id);
                 }
                 break;
-            case 'activate':
+            case 'active':
                 foreach ($ids as $id) {
                     app(EmailSubscribeRepository::class)->update(['active' => true], $id);
+                }
+                break;
+            case 'inactive':
+                foreach ($ids as $id) {
+                    app(EmailSubscribeRepository::class)->update(['active' => false], $id);
                 }
         }
     }

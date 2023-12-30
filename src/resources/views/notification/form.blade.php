@@ -7,8 +7,8 @@
         <div class="row">
             <div class="col-md-8">
                 <div class="form-group">
-                    <label class="col-form-label" for="users">@lang('cms::app.send_for') <abbr>*</abbr></label>
-                    <select name="users[]" id="users" class="form-control load-users" data-placeholder="--- @lang('cms::app.users') ---" multiple @if($model->users == -1) disabled @endif>
+                    <label class="col-form-label" for="users">{{ trans('cms::app.send_to') }} <abbr>*</abbr></label>
+                    <select name="users[]" id="users" class="form-control load-users" data-placeholder="--- {{ trans('cms::app.users') }} ---" multiple @if($model->users == -1) disabled @endif>
                         @if(!empty($users))
                             @foreach($users as $user)
                                 <option value="{{ $user->id }}" selected>{{ $user->name }}</option>
@@ -16,26 +16,20 @@
                         @endif
                     </select>
 
-                    <input type="checkbox" class="all-users" id="all-users" @if($model->users == -1) checked @endif> <label for="all-users">@lang('cms::app.all_users')</label>
+                    <input type="checkbox" class="all-users" id="all-users" @if($model->users == -1) checked @endif> <label for="all-users">{{ trans('cms::app.all_users') }}</label>
                 </div>
 
-                @component('cms::components.form_input', [
-                    'label' => trans('cms::app.subject'),
-                    'name' => 'data[subject]',
-                    'value' => $model->data['subject'] ?? '',
-                    'required' => true
-                ])
-                @endcomponent
+                {{ Field::text(trans('cms::app.subject'), 'data[subject]', ['value' => $model->data['subject'] ?? '', 'required' => true]) }}
 
                 {{ Field::editor(trans('cms::app.content'), 'data[body]', [
-                    'value' => $model->data['body'] ?? ''
+                    'value' => $model->data['body'] ?? '',
+                    'id' => 'content-body'
                 ]) }}
-
             </div>
 
             <div class="col-md-4">
                 <div class="form-group">
-                    <label class="col-form-label">@lang('cms::app.via') <abbr>*</abbr></label>
+                    <label class="col-form-label">{{ trans('cms::app.via') }} <abbr>*</abbr></label>
                     @php
                     $methods = $model->method ? explode(',', $model->method) : [];
                     @endphp
@@ -46,7 +40,7 @@
                         </div>
                     @endforeach
                 </div>
-
+                
                 @component('cms::components.form_image', [
                     'label' => trans('cms::app.image'),
                     'name' => 'data[image]',
