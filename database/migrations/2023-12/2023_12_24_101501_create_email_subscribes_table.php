@@ -16,7 +16,7 @@ return new class extends Migration {
             'jw_notification_email_subscribes',
             function (Blueprint $table) {
                 $table->bigIncrements('id');
-                $table->uuid();
+                $table->uuid()->index();
                 $table->string('name')->nullable();
                 $table->string('email')->index();
                 $table->unsignedBigInteger('site_id')->default(0)->index();

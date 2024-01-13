@@ -11,8 +11,6 @@
 namespace Juzaweb\Notification\Http\Datatable;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\View\Factory;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Juzaweb\CMS\Abstracts\DataTable;
 use Juzaweb\CMS\Repositories\Criterias\FilterCriteria;
@@ -96,12 +94,5 @@ class EmailSubscribeDatatable extends DataTable
                     app(EmailSubscribeRepository::class)->update(['active' => false], $id);
                 }
         }
-    }
-
-    public function activeFormatter($value, $row, $index): Factory|View
-    {
-        $status = $row->active ? 'active' : 'inactive';
-
-        return view('cms::components.datatable.status', compact('status'));
     }
 }

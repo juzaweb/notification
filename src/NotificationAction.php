@@ -20,7 +20,7 @@ class NotificationAction extends Action
             'notification',
             [
                 'icon' => 'fa fa-bell',
-                'position' => 100,
+                'position' => 99,
             ]
         );
 
