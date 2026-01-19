@@ -1,0 +1,11 @@
+{
+    "name": "Notification",
+    "alias": "notification",
+    "description": "Management subscribers and sending notifications to subscribers",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Juzaweb\\Modules\\Notification\\Providers\\NotificationServiceProvider"
+    ],
+    "files": []
+}
