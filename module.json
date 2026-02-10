@@ -1,6 +1,7 @@
 {
     "name": "Notification",
     "alias": "notification",
+    "title": "Notification Management",
     "description": "Management subscribers and sending notifications to subscribers",
     "keywords": [],
     "priority": 0,
