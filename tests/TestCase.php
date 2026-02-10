@@ -1,6 +1,6 @@
 <?php
 
-namespace Juzaweb\Modules\Blog\Tests;
+namespace Juzaweb\Modules\Notification\Tests;
 
 use Juzaweb\Modules\Core\Providers\CoreServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
@@ -91,7 +91,7 @@ abstract class TestCase extends Orchestra
     {
         return [
             CoreServiceProvider::class,
-            \Juzaweb\Modules\Blog\Providers\BlogServiceProvider::class,
+            \Juzaweb\Modules\Notification\Providers\NotificationServiceProvider::class,
             \Juzaweb\QueryCache\QueryCacheServiceProvider::class,
             \Spatie\Activitylog\ActivitylogServiceProvider::class,
             \Juzaweb\Hooks\HooksServiceProvider::class,
