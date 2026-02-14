@@ -2,6 +2,7 @@
 
 namespace Juzaweb\Modules\Notification\Providers;
 
+use Juzaweb\Modules\Core\Facades\Menu;
 use Juzaweb\Modules\Core\Providers\ServiceProvider;
 
 class NotificationServiceProvider extends ServiceProvider
@@ -22,7 +23,18 @@ class NotificationServiceProvider extends ServiceProvider
 
     protected function registerMenus(): void
     {
-        //
+        Menu::make('notifications-management', function () {
+            return [
+                'title' => __('Notifications'),
+            ];
+        });
+
+        Menu::make('sent-notifications', function () {
+            return [
+                'title' => __('Sent Notifications'),
+                'parent' => 'notifications-management'
+            ];
+        });
     }
 
     protected function registerConfig(): void
