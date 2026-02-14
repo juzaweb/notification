@@ -1,14 +1,14 @@
 <?php
 
-namespace Juzaweb\Modules\Notification\Http\Controllers;
+namespace Juzaweb\Modules\Notification\Http\Controllers\Admin;
 
+use Illuminate\Support\Facades\DB;
 use Juzaweb\Modules\Core\Facades\Breadcrumb;
 use Juzaweb\Modules\Core\Http\Controllers\AdminController;
-use Illuminate\Support\Facades\DB;
-use Juzaweb\Modules\Notification\Models\SentNotification;
-use Juzaweb\Modules\Notification\Http\Requests\SentNotificationRequest;
-use Juzaweb\Modules\Notification\Http\Requests\SentNotificationActionsRequest;
 use Juzaweb\Modules\Notification\Http\DataTables\SentNotificationsDataTable;
+use Juzaweb\Modules\Notification\Http\Requests\SentNotificationActionsRequest;
+use Juzaweb\Modules\Notification\Http\Requests\SentNotificationRequest;
+use Juzaweb\Modules\Notification\Models\SentNotification;
 
 class SentNotificationController extends AdminController
 {

@@ -37,7 +37,8 @@ class SentNotificationsDataTable extends DataTable
     public function actions(Model $model): array
     {
         return [
-            Action::edit(admin_url("sent-notifications/{$model->id}/edit"))->can('sent-notifications.edit'),
+            Action::edit(admin_url("sent-notifications/{$model->id}/edit"))
+                ->can('sent-notifications.edit'),
             Action::delete()->can('sent-notifications.delete'),
         ];
     }
