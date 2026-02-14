@@ -14,11 +14,19 @@ class NotificationServiceProvider extends ServiceProvider
 
     public function register(): void
     {
+        $this->registerNotificationManager();
         $this->registerTranslations();
         $this->registerConfig();
         $this->registerViews();
         $this->loadMigrationsFrom(__DIR__ . '/../../database/migrations');
         $this->app->register(RouteServiceProvider::class);
+    }
+
+    protected function registerNotificationManager(): void
+    {
+        $this->app->singleton('notification.manager', function ($app) {
+            return new \Juzaweb\Modules\Notification\Services\NotificationManager();
+        });
     }
 
     protected function registerMenus(): void
