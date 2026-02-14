@@ -18,6 +18,6 @@ class Notification extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return 'notification.manager';
+        return \Juzaweb\Modules\Notification\Contracts\Notification::class;
     }
 }

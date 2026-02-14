@@ -2,9 +2,10 @@
 
 namespace Juzaweb\Modules\Notification\Services;
 
+use Juzaweb\Modules\Notification\Contracts\Notification;
 use Juzaweb\Modules\Notification\Contracts\RecipientTypeInterface;
 
-class NotificationManager
+class NotificationManager implements Notification
 {
     /**
      * Registered recipient types.
@@ -12,6 +13,11 @@ class NotificationManager
      * @var array<string, RecipientTypeInterface>
      */
     protected array $recipientTypes = [];
+
+    /**
+     * @var array <string, array<string, mixed>>
+     */
+    protected array $subscriptableChannels = [];
 
     /**
      * Register a new recipient type.
@@ -79,5 +85,36 @@ class NotificationManager
         unset($this->recipientTypes[$key]);
 
         return $this;
+    }
+
+    /**
+     * @param string $channel
+     * @param array<string, mixed> $options
+     * @return void
+     */
+    public function subscriptable(string $channel, array $data = []): void
+    {
+        $this->subscriptableChannels[$channel] = $data;
+    }
+
+    /**
+     * Get subscriptable channels.
+     *
+     * @return array<string>
+     */
+    public function getSubscriptableChannels(): array
+    {
+        return array_keys($this->subscriptableChannels);
+    }
+
+    /**
+     * Get subscriptable data.
+     *
+     * @param string $channel
+     * @return array<string, mixed>
+     */
+    public function getSubscriptableData(string $channel): array
+    {
+        return $this->subscriptableChannels[$channel] ?? [];
     }
 }
