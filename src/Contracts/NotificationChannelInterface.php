@@ -4,6 +4,12 @@ namespace Juzaweb\Modules\Notification\Contracts;
 
 interface NotificationChannelInterface
 {
+    /**
+     * Get the Laravel notification channel class name.
+     *
+     * @return string
+     */
+    public function getChannel(): string;
 
     /**
      * Get the display label for the notification channel.

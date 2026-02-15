@@ -5,8 +5,13 @@ namespace Juzaweb\Modules\Notification\Channels;
 use NotificationChannels\Fcm\FcmChannel as BaseFcmChannel;
 use Juzaweb\Modules\Notification\Contracts\NotificationChannelInterface;
 
-class FcmChannel extends BaseFcmChannel implements NotificationChannelInterface
+class FcmChannel implements NotificationChannelInterface
 {
+    public function getChannel(): string
+    {
+        return BaseFcmChannel::class;
+    }
+
     public function getLabel(): string
     {
         return 'FCM';

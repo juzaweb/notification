@@ -5,8 +5,13 @@ namespace Juzaweb\Modules\Notification\Channels;
 use Illuminate\Notifications\Channels\MailChannel;
 use Juzaweb\Modules\Notification\Contracts\NotificationChannelInterface;
 
-class EmailChannel extends MailChannel implements NotificationChannelInterface
+class EmailChannel implements NotificationChannelInterface
 {
+    public function getChannel(): string
+    {
+        return MailChannel::class;
+    }
+
     public function getLabel(): string
     {
         return 'Email';
