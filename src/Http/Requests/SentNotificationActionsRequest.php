@@ -10,7 +10,7 @@ class SentNotificationActionsRequest extends FormRequest
     public function rules()
     {
         return [
-            'action' => ['required'],
+            'action' => ['required', 'in:delete,sent'],
             'ids' => ['required', 'array', 'min:1', new AllExist('sent_notifications', 'id')],
         ];
     }

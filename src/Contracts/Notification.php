@@ -35,6 +35,14 @@ interface Notification
     public function getRecipientTypesArray(): array;
 
     /**
+     * Get a specific recipient type by key.
+     *
+     * @param string $key
+     * @return RecipientTypeInterface|null
+     */
+    public function getRecipientType(string $key): ?RecipientTypeInterface;
+
+    /**
      * Register a notification channel.
      *
      * @param string $key

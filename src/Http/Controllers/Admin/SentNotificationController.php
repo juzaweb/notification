@@ -9,6 +9,7 @@ use Juzaweb\Modules\Notification\Contracts\Notification;
 use Juzaweb\Modules\Notification\Http\DataTables\SentNotificationsDataTable;
 use Juzaweb\Modules\Notification\Http\Requests\SentNotificationActionsRequest;
 use Juzaweb\Modules\Notification\Http\Requests\SentNotificationRequest;
+use Juzaweb\Modules\Notification\Jobs\SendNotificationJob;
 use Juzaweb\Modules\Notification\Models\SentNotification;
 
 class SentNotificationController extends AdminController
@@ -121,6 +122,11 @@ class SentNotificationController extends AdminController
         foreach ($models as $model) {
             if ($action === 'delete') {
                 $model->delete();
+            }
+
+            if ($action === 'sent') {
+                SendNotificationJob::dispatch($model);
+                $message = __('Notifications have been queued for sending');
             }
         }
 
