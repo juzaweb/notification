@@ -283,6 +283,96 @@ In your Blade view:
 </select>
 ```
 
+### Subscriptable Channels
+
+Mark channels as subscriptable to allow users to subscribe/unsubscribe:
+
+```php
+use Juzaweb\Modules\Notification\Facades\Notification;
+
+// Mark a channel as subscriptable
+Notification::subscriptable('email', [
+    'can_unsubscribe' => true,
+    'default_enabled' => true,
+]);
+
+Notification::subscriptable('sms', [
+    'can_unsubscribe' => true,
+    'default_enabled' => false,
+]);
+
+// Get all subscriptable channels
+$subscriptableChannels = Notification::getSubscriptableChannels();
+// Returns: ['email', 'sms']
+
+// Get subscriptable data for a specific channel
+$emailData = Notification::getSubscriptableData('email');
+/*
+Returns:
+[
+    'can_unsubscribe' => true,
+    'default_enabled' => true,
+]
+*/
+```
+
+### Sending Bulk Notifications
+
+Use the `SendNotificationJob` to send notifications to multiple recipients:
+
+```php
+use Juzaweb\Modules\Notification\Jobs\SendNotificationJob;
+use Juzaweb\Modules\Notification\Models\SentNotification;
+
+// Create a notification
+$notification = SentNotification::create([
+    'title' => 'System Maintenance',
+    'message' => 'The system will be under maintenance tomorrow.',
+    'recipient_type' => 'all_users',
+    'via' => ['email', 'database'],
+]);
+
+// Dispatch job to send notifications
+SendNotificationJob::dispatch($notification);
+
+// Or with custom chunk size (default is 100)
+SendNotificationJob::dispatch($notification, 50);
+```
+
+The job will:
+1. Get recipients from the registered recipient type
+2. Process recipients in chunks to avoid memory issues
+3. Send notifications via specified channels
+4. Update the `sent_at` timestamp when complete
+
+### Bulk Actions in Admin Panel
+
+From the admin panel, you can select multiple notifications and perform bulk actions:
+
+- **Delete**: Remove selected notifications
+- **Send**: Queue selected notifications for sending
+
+```php
+// In your controller
+public function bulk(SentNotificationActionsRequest $request)
+{
+    $action = $request->input('action'); // 'delete' or 'sent'
+    $ids = $request->input('ids', []);
+
+    $models = SentNotification::whereIn('id', $ids)->get();
+
+    foreach ($models as $model) {
+        if ($action === 'delete') {
+            $model->delete();
+        }
+
+        if ($action === 'sent') {
+            SendNotificationJob::dispatch($model);
+        }
+    }
+}
+```
+
 ## API Reference
 
 ### NotificationManager Methods
@@ -417,6 +507,66 @@ Remove a channel.
 
 ---
 
+#### `subscriptable(string $channel, array $data = []): void`
+
+Mark a channel as subscriptable, allowing users to subscribe or unsubscribe.
+
+**Parameters:**
+
+- `$channel` - The channel key
+- `$data` - Optional configuration data (e.g., `['can_unsubscribe' => true]`)
+
+**Example:**
+
+```php
+Notification::subscriptable('email', [
+    'can_unsubscribe' => true,
+    'default_enabled' => true,
+]);
+```
+
+---
+
+#### `getSubscriptableChannels(): array<string>`
+
+Get all channels marked as subscriptable.
+
+**Returns:** Array of channel keys that are subscriptable
+
+**Example:**
+
+```php
+$channels = Notification::getSubscriptableChannels();
+// Returns: ['email', 'sms', 'push']
+```
+
+---
+
+#### `getSubscriptableData(string $channel): array<string, mixed>`
+
+Get the subscriptable configuration data for a specific channel.
+
+**Parameters:**
+
+- `$channel` - The channel key
+
+**Returns:** Array of configuration data for the channel, or empty array if not found
+
+**Example:**
+
+```php
+$data = Notification::getSubscriptableData('email');
+/*
+Returns:
+[
+    'can_unsubscribe' => true,
+    'default_enabled' => true,
+]
+*/
+```
+
+---
+
 ### RecipientTypeInterface
 
 Interface that all recipient type classes must implement.
@@ -441,6 +591,23 @@ Convert the recipient type to an array representation.
 
 ---
 
+#### `getRecipients(): \Illuminate\Database\Eloquent\Builder`
+
+Get the Eloquent query builder for fetching recipients.
+
+**Returns:** Eloquent Builder instance that can be used to fetch recipients
+
+**Example:**
+
+```php
+public function getRecipients(): \Illuminate\Database\Eloquent\Builder
+{
+    return User::where('is_premium', true);
+}
+```
+
+---
+
 ### NotificationChannelInterface
 
 Interface that all notification channel classes must implement.
@@ -462,6 +629,84 @@ Get the description for the notification channel (optional).
 Convert the notification channel to an array representation.
 
 **Returns:** Array with `label` and `description` keys
+
+---
+
+## Examples
+
+### Complete Recipient Type Implementation
+
+```php
+use Juzaweb\Modules\Notification\Contracts\RecipientTypeInterface;
+use App\Models\User;
+
+class ActiveUsersRecipientType implements RecipientTypeInterface
+{
+    public function getLabel(): string
+    {
+        return __('Active Users');
+    }
+
+    public function getDescription(): ?string
+    {
+        return __('Users who have logged in within the last 30 days');
+    }
+
+    public function getRecipients(): \Illuminate\Database\Eloquent\Builder
+    {
+        return User::where('last_login_at', '>=', now()->subDays(30))
+            ->whereNotNull('email');
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'label' => $this->getLabel(),
+            'description' => $this->getDescription(),
+        ];
+    }
+}
+
+// Register it
+Notification::registerRecipientType('active_users', fn() => new ActiveUsersRecipientType());
+```
+
+### Sending Notifications with Error Handling
+
+```php
+use Juzaweb\Modules\Notification\Jobs\SendNotificationJob;
+use Juzaweb\Modules\Notification\Models\SentNotification;
+use Juzaweb\Modules\Notification\Exceptions\RecipientTypeNotFoundException;
+
+try {
+    $notification = SentNotification::create([
+        'title' => 'Welcome!',
+        'message' => 'Thank you for joining us.',
+        'recipient_type' => 'new_users',
+        'via' => ['email', 'database'],
+    ]);
+
+    SendNotificationJob::dispatch($notification);
+
+} catch (RecipientTypeNotFoundException $e) {
+    Log::error('Recipient type not found: ' . $e->getMessage());
+}
+```
+
+### Unregistering Types and Channels
+
+```php
+// Unregister a recipient type
+Notification::unregisterRecipientType('old_type');
+
+// Unregister a channel
+Notification::unregisterChannel('deprecated_channel');
+
+// Check before unregistering
+if (Notification::hasRecipientType('temp_type')) {
+    Notification::unregisterRecipientType('temp_type');
+}
+```
 
 ## License
 

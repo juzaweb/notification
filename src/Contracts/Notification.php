@@ -43,6 +43,22 @@ interface Notification
     public function getRecipientType(string $key): ?RecipientTypeInterface;
 
     /**
+     * Check if a recipient type is registered.
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function hasRecipientType(string $key): bool;
+
+    /**
+     * Unregister a recipient type.
+     *
+     * @param string $key
+     * @return self
+     */
+    public function unregisterRecipientType(string $key): self;
+
+    /**
      * Register a notification channel.
      *
      * @param string $key
@@ -73,9 +89,35 @@ interface Notification
      */
     public function hasChannel(string $key): bool;
 
+    /**
+     * Unregister a channel.
+     *
+     * @param string $key
+     * @return self
+     */
+    public function unregisterChannel(string $key): self;
+
+    /**
+     * Mark a channel as subscriptable.
+     *
+     * @param string $channel
+     * @param array<string, mixed> $data
+     * @return void
+     */
     public function subscriptable(string $channel, array $data = []): void;
 
+    /**
+     * Get all subscriptable channels.
+     *
+     * @return array<string>
+     */
     public function getSubscriptableChannels(): array;
 
+    /**
+     * Get subscriptable data for a specific channel.
+     *
+     * @param string $channel
+     * @return array<string, mixed>
+     */
     public function getSubscriptableData(string $channel): array;
 }
