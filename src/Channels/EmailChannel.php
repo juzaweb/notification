@@ -2,9 +2,10 @@
 
 namespace Juzaweb\Modules\Notification\Channels;
 
+use Illuminate\Notifications\Channels\MailChannel;
 use Juzaweb\Modules\Notification\Contracts\NotificationChannelInterface;
 
-class EmailChannel implements NotificationChannelInterface
+class EmailChannel extends MailChannel implements NotificationChannelInterface
 {
     public function getLabel(): string
     {

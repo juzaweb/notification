@@ -19,8 +19,7 @@ class SentNotificationRequest extends FormRequest
 			'title' => ['required'],
 			'message' => ['required'],
 			'recipient_type' => ['required'],
-			'via' => ['required'],
-			'sent_at' => ['required']
+			'via' => ['required', 'array'],
 		];
     }
 }

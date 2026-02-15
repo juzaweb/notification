@@ -12,6 +12,7 @@ class NotificationServiceProvider extends ServiceProvider
     {
         $this->registerMenus();
         $this->registerRecipientTypes();
+        $this->registerChannels();
     }
 
     public function register(): void
@@ -53,6 +54,15 @@ class NotificationServiceProvider extends ServiceProvider
 
         $notification->registerRecipientType('all_users', function () {
             return new \Juzaweb\Modules\Notification\RecipientTypes\AllUsersRecipientType();
+        });
+    }
+
+    protected function registerChannels(): void
+    {
+        $notification = app(Notification::class);
+
+        $notification->registerChannel('email', function () {
+            return app(\Juzaweb\Modules\Notification\Channels\EmailChannel::class);
         });
     }
 
