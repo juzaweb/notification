@@ -23,16 +23,12 @@
                 <x-card title="{{ __('Information') }}">
                     {{ Field::text(__('Title'), 'title', ['value' => $model->title]) }}
 
-                    {{ Field::text(__('Message'), 'message', ['value' => $model->message]) }}
-
                     {{ Field::select(__('Recipient Type'), 'recipient_type', [
                         'options' => $recipientTypes,
                         'value' => $model->recipient_type
                     ]) }}
 
-                    {{ Field::text(__('Via'), 'via', ['value' => $model->via]) }}
-
-                    {{ Field::text(__('Sent At'), 'sent_at', ['value' => $model->sent_at]) }}
+                    {{ Field::textarea(__('Message'), 'message', ['value' => $model->message, 'rows' => 5]) }}
                 </x-card>
             </div>
 

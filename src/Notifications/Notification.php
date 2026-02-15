@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notification as BaseNotification;
 use Illuminate\Support\Traits\Macroable;
 use Juzaweb\Modules\Notification\Contracts\Notification as ContractsNotification;
 use Juzaweb\Modules\Notification\Models\SentNotification;
+use NotificationChannels\Fcm\FcmMessage;
+use NotificationChannels\Fcm\Resources\Notification as FcmNotificationResource;
 
 class Notification extends BaseNotification implements ShouldQueue
 {
@@ -43,9 +45,24 @@ class Notification extends BaseNotification implements ShouldQueue
 
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-            ->subject($this->sentNotification->title)
-            ->text($this->sentNotification->message);
+        $lines = explode("\n", $this->sentNotification->message);
+
+        $msg = (new MailMessage)->subject($this->sentNotification->title);
+
+        foreach ($lines as $line) {
+            $msg->line($line);
+        }
+
+        return $msg;
+    }
+
+    public function toFcm($notifiable): FcmMessage
+    {
+        return (new FcmMessage)->notification(
+            (new FcmNotificationResource())
+            ->title($this->sentNotification->title)
+            ->body($this->sentNotification->message)
+        );
     }
 
     /**
