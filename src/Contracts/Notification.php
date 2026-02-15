@@ -57,6 +57,14 @@ interface Notification
      */
     public function getChannelsArray(): array;
 
+    /**
+     * Check if a channel is registered.
+     *
+     * @param string $key
+     * @return bool
+     */
+    public function hasChannel(string $key): bool;
+
     public function subscriptable(string $channel, array $data = []): void;
 
     public function getSubscriptableChannels(): array;
