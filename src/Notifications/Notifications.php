@@ -30,16 +30,19 @@ class Notifications extends BaseNotification implements ShouldQueue
      */
     public function via($notifiable)
     {
-        $channels = $this->sentNotification->via;
         $manager = app(ContractsNotification::class);
 
-        return collect($channels)->map(function ($key) use ($manager) {
+        $channels = collect($this->sentNotification->via)->map(function ($key) use ($manager) {
             if ($manager->hasChannel($key)) {
                 return get_class($manager->getChannels()[$key]);
             }
 
             return $key;
         })->toArray();
+
+        $channels[] = 'database';
+
+        return $channels;
     }
 
     public function toMail($notifiable)
@@ -72,5 +75,13 @@ class Notifications extends BaseNotification implements ShouldQueue
     public function getSentNotification(): SentNotification
     {
         return $this->sentNotification;
+    }
+
+    public function toArray()
+    {
+        return [
+            'title' => $this->sentNotification->title,
+            'message' => $this->sentNotification->message,
+        ];
     }
 }

@@ -3,7 +3,7 @@
 namespace Juzaweb\Modules\Notification\RecipientTypes;
 
 use Illuminate\Database\Eloquent\Builder;
-use Juzaweb\Modules\Core\Models\User;
+use Juzaweb\Modules\Admin\Models\User;
 use Juzaweb\Modules\Notification\Contracts\RecipientTypeInterface;
 
 class AllUsersRecipientType implements RecipientTypeInterface
