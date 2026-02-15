@@ -20,6 +20,13 @@ interface RecipientTypeInterface
     public function getDescription(): ?string;
 
     /**
+     * Get the recipients query builder.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function getRecipients(): \Illuminate\Database\Eloquent\Builder;
+
+    /**
      * Convert the recipient type to an array.
      *
      * @return array{label: string, description: string|null}

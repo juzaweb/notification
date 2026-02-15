@@ -4,12 +4,14 @@ namespace Juzaweb\Modules\Notification\Providers;
 
 use Juzaweb\Modules\Core\Facades\Menu;
 use Juzaweb\Modules\Core\Providers\ServiceProvider;
+use Juzaweb\Modules\Notification\Contracts\Notification;
 
 class NotificationServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
         $this->registerMenus();
+        $this->registerRecipientTypes();
     }
 
     public function register(): void
@@ -24,7 +26,7 @@ class NotificationServiceProvider extends ServiceProvider
 
     protected function registerNotificationManager(): void
     {
-        $this->app->singleton('notification.manager', function ($app) {
+        $this->app->singleton(Notification::class, function ($app) {
             return new \Juzaweb\Modules\Notification\Services\NotificationManager();
         });
     }
@@ -42,6 +44,15 @@ class NotificationServiceProvider extends ServiceProvider
                 'title' => __('Sent Notifications'),
                 'parent' => 'notifications-management'
             ];
+        });
+    }
+
+    protected function registerRecipientTypes(): void
+    {
+        $notification = app(Notification::class);
+
+        $notification->registerRecipientType('all_users', function () {
+            return new \Juzaweb\Modules\Notification\RecipientTypes\AllUsersRecipientType();
         });
     }
 

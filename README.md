@@ -1,13 +1,13 @@
 # Juzaweb CMS Notification Module
 
-This package provides notification management functionality with support for registering and managing different recipient types.
+This package provides notification management functionality with support for registering and managing different recipient types and notification channels.
 
 ## Features
 
-- Singleton `NotificationManager` service for managing recipient types
+- Singleton `NotificationManager` service for managing recipient types and notification channels
 - Facade for easy access
-- Register custom recipient types with labels and descriptions
-- Query registered recipient types
+- Register custom recipient types and channels with callback pattern
+- Query registered recipient types and channels
 
 ## Installation
 
@@ -15,30 +15,83 @@ The package is auto-registered via Laravel's service provider discovery.
 
 ## Usage
 
-### Registering Recipient Types
+### Registering Notification Channels
 
-You can register recipient types in your service provider's `boot()` method or anywhere in your bootstrap code:
+You can register notification channels in your service provider's `boot()` method:
 
 ```php
 use Juzaweb\Modules\Notification\Facades\Notification;
-use Juzaweb\Modules\Notification\RecipientTypes\RecipientType;
+use Juzaweb\Modules\Notification\Channels\EmailChannel;
 
-// Register a recipient type using the default RecipientType class
-Notification::registerRecipientType(
-    new RecipientType('all_users', 'All Users', 'Send to all registered users')
-);
+// Register using a class
+Notification::registerChannel('email', fn() => new EmailChannel());
 
-Notification::registerRecipientType(
-    new RecipientType('premium_users', 'Premium Users', 'Send to users with premium subscription')
-);
+// Or register using anonymous class
+Notification::registerChannel('sms', function () {
+    return new class implements NotificationChannelInterface {
+        public function getLabel(): string {
+            return 'SMS';
+        }
 
-Notification::registerRecipientType(
-    new RecipientType('specific_user', 'Specific User', 'Send to a specific user by ID')
-);
+        public function getDescription(): ?string {
+            return 'Send notifications via SMS';
+        }
 
-Notification::registerRecipientType(
-    new RecipientType('user_group', 'User Group', 'Send to a group of users')
-);
+        public function toArray(): array {
+            return [
+                'label' => $this->getLabel(),
+                'description' => $this->getDescription(),
+            ];
+        }
+    };
+});
+```
+
+### Registering Recipient Types
+
+You can register recipient types in your service provider's `boot()` method:
+
+```php
+use Juzaweb\Modules\Notification\Facades\Notification;
+
+// Register recipient types with callback pattern
+Notification::registerRecipientType('all_users', function () {
+    return new class implements RecipientTypeInterface {
+        public function getLabel(): string {
+            return 'All Users';
+        }
+
+        public function getDescription(): ?string {
+            return 'Send to all registered users';
+        }
+
+        public function toArray(): array {
+            return [
+                'label' => $this->getLabel(),
+                'description' => $this->getDescription(),
+            ];
+        }
+    };
+});
+
+Notification::registerRecipientType('premium_users', function () {
+    return new class implements RecipientTypeInterface {
+        public function getLabel(): string {
+            return 'Premium Users';
+        }
+
+        public function getDescription(): ?string {
+            return 'Send to users with premium subscription';
+        }
+
+        public function toArray(): array {
+            return [
+                'label' => $this->getLabel(),
+                'description' => $this->getDescription(),
+            ];
+        }
+    };
+});
 ```
 
 ### Creating Custom Recipient Types
@@ -50,11 +103,6 @@ use Juzaweb\Modules\Notification\Contracts\RecipientTypeInterface;
 
 class PremiumUsersRecipientType implements RecipientTypeInterface
 {
-    public function getKey(): string
-    {
-        return 'premium_users';
-    }
-
     public function getLabel(): string
     {
         return __('Premium Users');
@@ -68,7 +116,6 @@ class PremiumUsersRecipientType implements RecipientTypeInterface
     public function toArray(): array
     {
         return [
-            'key' => $this->getKey(),
             'label' => $this->getLabel(),
             'description' => $this->getDescription(),
         ];
@@ -83,7 +130,39 @@ class PremiumUsersRecipientType implements RecipientTypeInterface
 }
 
 // Register the custom type
-Notification::registerRecipientType(new PremiumUsersRecipientType());
+Notification::registerRecipientType('premium_users', fn() => new PremiumUsersRecipientType());
+```
+
+### Creating Custom Notification Channels
+
+Create notification channels by implementing `NotificationChannelInterface`:
+
+```php
+use Juzaweb\Modules\Notification\Contracts\NotificationChannelInterface;
+
+class PushNotificationChannel implements NotificationChannelInterface
+{
+    public function getLabel(): string
+    {
+        return __('Push Notification');
+    }
+
+    public function getDescription(): ?string
+    {
+        return __('Send push notifications to mobile devices');
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'label' => $this->getLabel(),
+            'description' => $this->getDescription(),
+        ];
+    }
+}
+
+// Register the custom channel
+Notification::registerChannel('push', fn() => new PushNotificationChannel());
 ```
 
 ### Getting Recipient Types
@@ -108,12 +187,10 @@ $recipientTypesArray = Notification::getRecipientTypesArray();
 Returns:
 [
     'all_users' => [
-        'key' => 'all_users',
         'label' => 'All Users',
         'description' => 'Send to all registered users'
     ],
     'premium_users' => [
-        'key' => 'premium_users',
         'label' => 'Premium Users',
         'description' => 'Send to users with premium subscription'
     ],
@@ -132,23 +209,35 @@ if ($type) {
 }
 ```
 
-### Checking Recipient Type Existence
+### Getting Notification Channels
 
 ```php
 use Juzaweb\Modules\Notification\Facades\Notification;
 
-if (Notification::hasRecipientType('all_users')) {
-    // Recipient type exists
+// Get all registered channels (as objects)
+$channels = Notification::getChannels();
+
+// Get all registered channels as arrays
+$channelsArray = Notification::getChannelsArray();
+/*
+Returns:
+[
+    'email' => [
+        'label' => 'Email',
+        'description' => 'Send notifications via email'
+    ],
+    'sms' => [
+        'label' => 'SMS',
+        'description' => 'Send notifications via SMS'
+    ],
+    // ...
+]
+*/
+
+// Check if a channel exists
+if (Notification::hasChannel('email')) {
+    // Channel exists
 }
-```
-
-### Removing Recipient Types
-
-```php
-use Juzaweb\Modules\Notification\Facades\Notification;
-
-// Unregister a recipient type
-Notification::unregisterRecipientType('specific_user');
 ```
 
 ### Using in Views
@@ -162,8 +251,9 @@ public function create()
 {
     // Get as array for easier use in views
     $recipientTypes = Notification::getRecipientTypesArray();
+    $channels = Notification::getChannelsArray();
 
-    return view('notification::create', compact('recipientTypes'));
+    return view('notification::create', compact('recipientTypes', 'channels'));
 }
 ```
 
@@ -180,30 +270,57 @@ In your Blade view:
         </option>
     @endforeach
 </select>
+
+<select name="channels[]" class="form-control" multiple>
+    @foreach($channels as $key => $channel)
+        <option value="{{ $key }}">
+            {{ $channel['label'] }}
+            @if(!empty($channel['description']))
+                - {{ $channel['description'] }}
+            @endif
+        </option>
+    @endforeach
+</select>
 ```
 
 ## API Reference
 
 ### NotificationManager Methods
 
-#### `registerRecipientType(RecipientTypeInterface $recipientType): self`
+#### `registerRecipientType(string $key, callable $callback): self`
 
 Register a new recipient type.
 
 **Parameters:**
 
-- `$recipientType` - An instance implementing `RecipientTypeInterface`
+- `$key` - The unique key for the recipient type
+- `$callback` - Callback that returns a `RecipientTypeInterface` instance
 
 **Returns:** `self` for method chaining
 
 **Example:**
 
 ```php
-use Juzaweb\Modules\Notification\RecipientTypes\RecipientType;
+Notification::registerRecipientType('all_users', fn() => new AllUsersRecipientType());
+```
 
-Notification::registerRecipientType(
-    new RecipientType('all_users', 'All Users', 'Send to all users')
-);
+---
+
+#### `registerChannel(string $key, callable $callback): self`
+
+Register a new notification channel.
+
+**Parameters:**
+
+- `$key` - The unique key for the channel
+- `$callback` - Callback that returns a `NotificationChannelInterface` instance
+
+**Returns:** `self` for method chaining
+
+**Example:**
+
+```php
+Notification::registerChannel('email', fn() => new EmailChannel());
 ```
 
 ---
@@ -214,37 +331,13 @@ Get all registered recipient types as objects.
 
 **Returns:** Array of `RecipientTypeInterface` objects indexed by key
 
-**Example:**
-
-```php
-$types = Notification::getRecipientTypes();
-foreach ($types as $key => $type) {
-    echo $type->getLabel();
-}
-```
-
 ---
 
 #### `getRecipientTypesArray(): array<string, array>`
 
 Get all registered recipient types as arrays (useful for views).
 
-**Returns:** Array of arrays with `key`, `label`, and `description` for each type
-
-**Example:**
-
-```php
-$typesArray = Notification::getRecipientTypesArray();
-/*
-[
-    'all_users' => [
-        'key' => 'all_users',
-        'label' => 'All Users',
-        'description' => 'Send to all users'
-    ]
-]
-*/
-```
+**Returns:** Array of arrays with `label` and `description` for each type
 
 ---
 
@@ -257,15 +350,6 @@ Get a specific recipient type by key.
 - `$key` - The recipient type key
 
 **Returns:** `RecipientTypeInterface` object or `null` if not found
-
-**Example:**
-
-```php
-$type = Notification::getRecipientType('all_users');
-if ($type) {
-    echo $type->getLabel();
-}
-```
 
 ---
 
@@ -293,15 +377,49 @@ Remove a recipient type.
 
 ---
 
+#### `getChannels(): array<string, NotificationChannelInterface>`
+
+Get all registered channels as objects.
+
+**Returns:** Array of `NotificationChannelInterface` objects indexed by key
+
+---
+
+#### `getChannelsArray(): array<string, array>`
+
+Get all registered channels as arrays (useful for views).
+
+**Returns:** Array of arrays with `label` and `description` for each channel
+
+---
+
+#### `hasChannel(string $key): bool`
+
+Check if a channel is registered.
+
+**Parameters:**
+
+- `$key` - The channel key
+
+**Returns:** `true` if exists, `false` otherwise
+
+---
+
+#### `unregisterChannel(string $key): self`
+
+Remove a channel.
+
+**Parameters:**
+
+- `$key` - The channel key to remove
+
+**Returns:** `self` for method chaining
+
+---
+
 ### RecipientTypeInterface
 
 Interface that all recipient type classes must implement.
-
-#### `getKey(): string`
-
-Get the unique key for the recipient type.
-
----
 
 #### `getLabel(): string`
 
@@ -319,7 +437,31 @@ Get the description for the recipient type (optional).
 
 Convert the recipient type to an array representation.
 
-**Returns:** Array with `key`, `label`, and `description` keys
+**Returns:** Array with `label` and `description` keys
+
+---
+
+### NotificationChannelInterface
+
+Interface that all notification channel classes must implement.
+
+#### `getLabel(): string`
+
+Get the display label for the notification channel.
+
+---
+
+#### `getDescription(): ?string`
+
+Get the description for the notification channel (optional).
+
+---
+
+#### `toArray(): array`
+
+Convert the notification channel to an array representation.
+
+**Returns:** Array with `label` and `description` keys
 
 ## License
 
