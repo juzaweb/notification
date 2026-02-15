@@ -37,7 +37,21 @@
             </div>
 
             <div class="col-md-3">
-
+                <x-card title="{{ __('Notification Channels') }}">
+                    @foreach ($channels as $key => $label)
+                        <div class="form-check mb-2">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="via[]"
+                                   value="{{ $key }}"
+                                   id="channel-{{ $key }}"
+                                   @if ($model->exists && in_array($key, $model->via ?? [])) checked @endif>
+                            <label class="form-check-label" for="channel-{{ $key }}">
+                                {{ $label }}
+                            </label>
+                        </div>
+                    @endforeach
+                </x-card>
             </div>
         </div>
     </form>

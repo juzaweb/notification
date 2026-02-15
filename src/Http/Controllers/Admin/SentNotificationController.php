@@ -16,7 +16,7 @@ class SentNotificationController extends AdminController
     public function __construct(protected Notification $notificationManager)
     {
     }
-    
+
     public function index(SentNotificationsDataTable $dataTable)
     {
         Breadcrumb::add(__('Sent Notifications'));
@@ -37,6 +37,7 @@ class SentNotificationController extends AdminController
 
         $backUrl = action([static::class, 'index']);
         $recipientTypes = $this->getRecipientTypesForSelect();
+        $channels = $this->getChannelsForCheckbox();
 
         return view(
             'notification::sent-notification.form',
@@ -45,6 +46,7 @@ class SentNotificationController extends AdminController
                 'action' => action([static::class, 'store']),
                 'backUrl' => $backUrl,
                 'recipientTypes' => $recipientTypes,
+                'channels' => $channels,
             ]
         );
     }
@@ -58,6 +60,7 @@ class SentNotificationController extends AdminController
         $model = SentNotification::findOrFail($id);
         $backUrl = action([static::class, 'index']);
         $recipientTypes = $this->getRecipientTypesForSelect();
+        $channels = $this->getChannelsForCheckbox();
 
         return view(
             'notification::sent-notification.form',
@@ -66,6 +69,7 @@ class SentNotificationController extends AdminController
                 'model' => $model,
                 'backUrl' => $backUrl,
                 'recipientTypes' => $recipientTypes,
+                'channels' => $channels,
             ]
         );
     }
@@ -144,6 +148,23 @@ class SentNotificationController extends AdminController
 
         foreach ($types as $key => $type) {
             $options[$key] = $type['label'];
+        }
+
+        return $options;
+    }
+
+    /**
+     * Get notification channels formatted for checkbox group.
+     *
+     * @return array<string, string>
+     */
+    protected function getChannelsForCheckbox(): array
+    {
+        $channels = $this->notificationManager->getChannelsArray();
+        $options = [];
+
+        foreach ($channels as $key => $channel) {
+            $options[$key] = $channel['label'];
         }
 
         return $options;
