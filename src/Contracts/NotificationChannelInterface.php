@@ -2,25 +2,25 @@
 
 namespace Juzaweb\Modules\Notification\Contracts;
 
-interface RecipientTypeInterface
+interface NotificationChannelInterface
 {
 
     /**
-     * Get the display label for the recipient type.
+     * Get the display label for the notification channel.
      *
      * @return string
      */
     public function getLabel(): string;
 
     /**
-     * Get the description for the recipient type.
+     * Get the description for the notification channel.
      *
      * @return string|null
      */
     public function getDescription(): ?string;
 
     /**
-     * Convert the recipient type to an array.
+     * Convert the notification channel to an array.
      *
      * @return array{label: string, description: string|null}
      */
