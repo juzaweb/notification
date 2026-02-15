@@ -116,23 +116,16 @@ class SentNotificationController extends AdminController
         $ids = $request->input('ids', []);
 
         $models = SentNotification::whereIn('id', $ids)->get();
+        $message = __('Bulk action performed successfully');
 
         foreach ($models as $model) {
-            if ($action === 'activate') {
-                $model->update(['active' => true]);
-            }
-
-            if ($action === 'deactivate') {
-                $model->update(['active' => false]);
-            }
-
             if ($action === 'delete') {
                 $model->delete();
             }
         }
 
         return $this->success([
-            'message' => __('Bulk action performed successfully'),
+            'message' => $message,
         ]);
     }
 

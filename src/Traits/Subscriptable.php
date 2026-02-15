@@ -5,7 +5,7 @@ namespace Juzaweb\Modules\Notification\Traits;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Juzaweb\Modules\Core\Models\NotificationSubscription;
+use Juzaweb\Modules\Notification\Models\NotificationSubscription;
 
 /**
  * @mixin Model
@@ -92,12 +92,12 @@ trait Subscriptable
      * Retrieves the first notification subscription with the given channel.
      *
      * @param string $channel The channel to search for.
-     * @return \Juzaweb\Modules\Core\Models\NotificationSubscription|null The first notification subscription with the given channel,
+     * @return \Juzaweb\Modules\Notification\Models\NotificationSubscription|null The first notification subscription with the given channel,
      * or null if not found.
      */
     public function subscribed(string $channel): ?NotificationSubscription
     {
-        /** @var \Juzaweb\Modules\Core\Models\NotificationSubscription|null */
+        /** @var \Juzaweb\Modules\Notification\Models\NotificationSubscription|null */
         return $this->notificationSubscriptions()->where('channel', $channel)->first();
     }
 
@@ -139,7 +139,7 @@ trait Subscriptable
      * @param string $channel The channel to subscribe to.
      * @param array $data Optional data to be associated with the subscription.
      * @param bool $force Whether to update the subscription if it already exists.
-     * @return \Juzaweb\Modules\Core\Models\NotificationSubscription The created or updated subscription.
+     * @return \Juzaweb\Modules\Notification\Models\NotificationSubscription The created or updated subscription.
      */
     public function subscribe(string $channel, array $data = [], bool $force = false): NotificationSubscription
     {
@@ -154,7 +154,7 @@ trait Subscriptable
             return $subscription;
         }
 
-        /** @var \Juzaweb\Modules\Core\Models\NotificationSubscription */
+        /** @var \Juzaweb\Modules\Notification\Models\NotificationSubscription */
         return $this->notificationSubscriptions()->create(
             [
                 'channel' => $channel,

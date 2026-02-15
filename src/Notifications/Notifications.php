@@ -12,7 +12,7 @@ use Juzaweb\Modules\Notification\Models\SentNotification;
 use NotificationChannels\Fcm\FcmMessage;
 use NotificationChannels\Fcm\Resources\Notification as FcmNotificationResource;
 
-class Notification extends BaseNotification implements ShouldQueue
+class Notifications extends BaseNotification implements ShouldQueue
 {
     use Queueable, Macroable;
 
