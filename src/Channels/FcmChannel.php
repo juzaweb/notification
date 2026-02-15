@@ -34,8 +34,13 @@ class FcmChannel implements NotificationChannelInterface
     public function getConfig(): array
     {
         return [
-            'server_key' => 'Server Key',
-            'sender_id' => 'Sender ID',
+            'apiKey' => 'API Key',
+            'authDomain' => 'Auth Domain',
+            'projectId' => 'Project ID',
+            'storageBucket' => 'Storage Bucket',
+            'messagingSenderId' => 'Messaging Sender ID',
+            'appId' => 'App ID',
+            'measurementId' => 'Measurement ID (Optional)',
         ];
     }
 }
