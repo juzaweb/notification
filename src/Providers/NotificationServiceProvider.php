@@ -46,6 +46,14 @@ class NotificationServiceProvider extends ServiceProvider
                 'parent' => 'notifications-management'
             ];
         });
+
+        Menu::make('notifications.channels', function () {
+            return [
+                'title' => __('Channels'),
+                'parent' => 'notifications-management',
+                'url' => 'channel-configs',
+            ];
+        });
     }
 
     protected function registerRecipientTypes(): void
