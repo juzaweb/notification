@@ -31,4 +31,11 @@ interface NotificationChannelInterface
      * @return array{label: string, description: string|null}
      */
     public function toArray(): array;
+
+    /**
+     * Get configuration fields for this channel.
+     *
+     * @return array<string, string> Array of config field keys and labels
+     */
+    public function getConfig(): array;
 }

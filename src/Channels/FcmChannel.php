@@ -29,4 +29,12 @@ class FcmChannel implements NotificationChannelInterface
             'description' => $this->getDescription(),
         ];
     }
+
+    public function getConfig(): array
+    {
+        return [
+            'server_key' => 'Server Key',
+            'sender_id' => 'Sender ID',
+        ];
+    }
 }

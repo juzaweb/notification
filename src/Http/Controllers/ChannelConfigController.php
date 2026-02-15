@@ -5,6 +5,7 @@ namespace Juzaweb\Modules\Notification\Http\Controllers;
 use Juzaweb\Modules\Core\Facades\Breadcrumb;
 use Juzaweb\Modules\Core\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\DB;
+use Juzaweb\Modules\Notification\Contracts\Notification;
 use Juzaweb\Modules\Notification\Models\ChannelConfig;
 use Juzaweb\Modules\Notification\Http\Requests\ChannelConfigRequest;
 use Juzaweb\Modules\Notification\Http\Requests\ChannelConfigActionsRequest;
@@ -12,6 +13,9 @@ use Juzaweb\Modules\Notification\Http\DataTables\ChannelConfigsDataTable;
 
 class ChannelConfigController extends AdminController
 {
+    public function __construct(protected Notification $notificationManager)
+    {
+    }
     public function index(ChannelConfigsDataTable $dataTable)
     {
         Breadcrumb::add(__('Channel Configs'));
@@ -31,6 +35,9 @@ class ChannelConfigController extends AdminController
         Breadcrumb::add(__('Create Channel Config'));
 
         $backUrl = action([static::class, 'index']);
+        $channels = collect($this->notificationManager->getChannelsArray())
+            ->map(fn ($item) => $item['label'])
+            ->prepend('-- Select Channel --', '');
 
         return view(
             'notification::channel-config.form',
@@ -38,6 +45,7 @@ class ChannelConfigController extends AdminController
                 'model' => new ChannelConfig(),
                 'action' => action([static::class, 'store']),
                 'backUrl' => $backUrl,
+                'channels' => $channels,
             ]
         );
     }
@@ -50,6 +58,9 @@ class ChannelConfigController extends AdminController
 
         $model = ChannelConfig::findOrFail($id);
         $backUrl = action([static::class, 'index']);
+        $channels = collect($this->notificationManager->getChannelsArray())
+            ->map(fn ($item) => $item['label'])
+            ->prepend('-- Select Channel --', '');
 
         return view(
             'notification::channel-config.form',
@@ -57,6 +68,7 @@ class ChannelConfigController extends AdminController
                 'action' => action([static::class, 'update'], [$id]),
                 'model' => $model,
                 'backUrl' => $backUrl,
+                'channels' => $channels,
             ]
         );
     }
@@ -94,6 +106,26 @@ class ChannelConfigController extends AdminController
         return $this->success([
             'redirect' => action([static::class, 'index']),
             'message' => __('ChannelConfig :name updated successfully', ['name' => $model->name]),
+        ]);
+    }
+
+    public function getChannelConfig(string $channelKey)
+    {
+        $channels = $this->notificationManager->getChannels();
+
+        if (!isset($channels[$channelKey])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Channel not found',
+            ], 404);
+        }
+
+        $channel = $channels[$channelKey];
+        $config = method_exists($channel, 'getConfig') ? $channel->getConfig() : [];
+
+        return response()->json([
+            'success' => true,
+            'data' => $config,
         ]);
     }
 

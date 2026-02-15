@@ -29,4 +29,9 @@ class EmailChannel implements NotificationChannelInterface
             'description' => $this->getDescription(),
         ];
     }
+
+    public function getConfig(): array
+    {
+        return [];
+    }
 }
