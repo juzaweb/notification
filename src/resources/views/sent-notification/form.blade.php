@@ -25,7 +25,10 @@
 
                     {{ Field::text(__('Message'), 'message', ['value' => $model->message]) }}
 
-                    {{ Field::text(__('Recipient Type'), 'recipient_type', ['value' => $model->recipient_type]) }}
+                    {{ Field::select(__('Recipient Type'), 'recipient_type', [
+                        'options' => $recipientTypes,
+                        'value' => $model->recipient_type
+                    ]) }}
 
                     {{ Field::text(__('Via'), 'via', ['value' => $model->via]) }}
 

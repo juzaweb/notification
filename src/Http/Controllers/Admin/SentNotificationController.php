@@ -5,6 +5,7 @@ namespace Juzaweb\Modules\Notification\Http\Controllers\Admin;
 use Illuminate\Support\Facades\DB;
 use Juzaweb\Modules\Core\Facades\Breadcrumb;
 use Juzaweb\Modules\Core\Http\Controllers\AdminController;
+use Juzaweb\Modules\Notification\Contracts\Notification;
 use Juzaweb\Modules\Notification\Http\DataTables\SentNotificationsDataTable;
 use Juzaweb\Modules\Notification\Http\Requests\SentNotificationActionsRequest;
 use Juzaweb\Modules\Notification\Http\Requests\SentNotificationRequest;
@@ -12,6 +13,10 @@ use Juzaweb\Modules\Notification\Models\SentNotification;
 
 class SentNotificationController extends AdminController
 {
+    public function __construct(protected Notification $notificationManager)
+    {
+    }
+    
     public function index(SentNotificationsDataTable $dataTable)
     {
         Breadcrumb::add(__('Sent Notifications'));
@@ -31,6 +36,7 @@ class SentNotificationController extends AdminController
         Breadcrumb::add(__('Create Sent Notification'));
 
         $backUrl = action([static::class, 'index']);
+        $recipientTypes = $this->getRecipientTypesForSelect();
 
         return view(
             'notification::sent-notification.form',
@@ -38,6 +44,7 @@ class SentNotificationController extends AdminController
                 'model' => new SentNotification(),
                 'action' => action([static::class, 'store']),
                 'backUrl' => $backUrl,
+                'recipientTypes' => $recipientTypes,
             ]
         );
     }
@@ -50,6 +57,7 @@ class SentNotificationController extends AdminController
 
         $model = SentNotification::findOrFail($id);
         $backUrl = action([static::class, 'index']);
+        $recipientTypes = $this->getRecipientTypesForSelect();
 
         return view(
             'notification::sent-notification.form',
@@ -57,6 +65,7 @@ class SentNotificationController extends AdminController
                 'action' => action([static::class, 'update'], [$id]),
                 'model' => $model,
                 'backUrl' => $backUrl,
+                'recipientTypes' => $recipientTypes,
             ]
         );
     }
@@ -121,5 +130,22 @@ class SentNotificationController extends AdminController
         return $this->success([
             'message' => __('Bulk action performed successfully'),
         ]);
+    }
+
+    /**
+     * Get recipient types formatted for select dropdown.
+     *
+     * @return array<string, string>
+     */
+    protected function getRecipientTypesForSelect(): array
+    {
+        $types = $this->notificationManager->getRecipientTypesArray();
+        $options = [];
+
+        foreach ($types as $key => $type) {
+            $options[$key] = $type['label'];
+        }
+
+        return $options;
     }
 }
