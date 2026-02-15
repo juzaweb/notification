@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\URL;
 use Juzaweb\Modules\Admin\Models\Guest;
 use Juzaweb\Modules\Core\Http\Controllers\ThemeController;
 use Juzaweb\Modules\Core\Http\Requests\NotificationSubscribeRequest;
-use Juzaweb\Modules\Notification\Mail\SubscriptionVerifyEmail;
+use Juzaweb\Modules\Notification\Notifications\SubscriptionVerifyEmail;
 use Juzaweb\Modules\Notification\Models\NotificationSubscription;
 
 class NotificationSubscribeController extends ThemeController

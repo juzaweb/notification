@@ -1,6 +1,6 @@
 <?php
 
-namespace Juzaweb\Modules\Notification\Mail;
+namespace Juzaweb\Modules\Notification\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
