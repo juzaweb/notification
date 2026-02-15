@@ -69,9 +69,9 @@ class NotificationServiceProvider extends ServiceProvider
     protected function registerConfig(): void
     {
         $this->publishes([
-            __DIR__ . '/../../config/config.php' => config_path('notification.php'),
+            __DIR__ . '/../../config/notification.php' => config_path('notification.php'),
         ], 'notification-config');
-        $this->mergeConfigFrom(__DIR__ . '/../../config/config.php', 'notification');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/notification.php', 'notification');
     }
 
     protected function registerTranslations(): void

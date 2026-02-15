@@ -35,7 +35,7 @@ class Notifications extends BaseNotification implements ShouldQueue
 
         return collect($channels)->map(function ($key) use ($manager) {
             if ($manager->hasChannel($key)) {
-                return $manager->getChannels()[$key];
+                return get_class($manager->getChannels()[$key]);
             }
 
             return $key;
