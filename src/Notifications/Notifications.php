@@ -6,7 +6,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification as BaseNotification;
-use Illuminate\Support\Traits\Macroable;
 use Juzaweb\Modules\Notification\Contracts\Notification as ContractsNotification;
 use Juzaweb\Modules\Notification\Models\SentNotification;
 use NotificationChannels\Fcm\FcmMessage;
@@ -14,7 +13,7 @@ use NotificationChannels\Fcm\Resources\Notification as FcmNotificationResource;
 
 class Notifications extends BaseNotification implements ShouldQueue
 {
-    use Queueable, Macroable;
+    use Queueable;
 
     protected SentNotification $sentNotification;
 

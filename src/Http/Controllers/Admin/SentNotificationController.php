@@ -98,6 +98,7 @@ class SentNotificationController extends AdminController
         $model = DB::transaction(
             function () use ($request, $model) {
                 $data = $request->validated();
+                $data['sent_at'] = null;
 
                 $model->update($data);
 

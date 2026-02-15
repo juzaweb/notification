@@ -18,7 +18,10 @@ class SendNotificationJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected SentNotification $sentNotification;
+
     protected int $chunkSize;
+
+    public int $timeout = 120; // Set a timeout for the job (in seconds)
 
     /**
      * Create a new job instance.

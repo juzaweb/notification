@@ -46,6 +46,8 @@ class SentNotificationsDataTable extends DataTable
     public function bulkActions(): array
     {
         return [
+            BulkAction::make(__('Sent'), icon: 'fas fa-solid fa-paper-plane')
+                ->can('sent-notifications.sent'),
             BulkAction::delete()->can('sent-notifications.delete'),
         ];
     }
