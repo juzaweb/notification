@@ -64,6 +64,10 @@ class NotificationServiceProvider extends ServiceProvider
         $notification->registerChannel('email', function () {
             return app(\Juzaweb\Modules\Notification\Channels\EmailChannel::class);
         });
+
+        $notification->registerChannel('fcm', function () {
+            return app(\Juzaweb\Modules\Notification\Channels\FcmChannel::class);
+        });
     }
 
     protected function registerConfig(): void

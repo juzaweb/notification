@@ -91,6 +91,7 @@ abstract class TestCase extends Orchestra
     {
         return [
             CoreServiceProvider::class,
+            \Kreait\Laravel\Firebase\ServiceProvider::class,
             \Juzaweb\Modules\Notification\Providers\NotificationServiceProvider::class,
             \Juzaweb\QueryCache\QueryCacheServiceProvider::class,
             \Spatie\Activitylog\ActivitylogServiceProvider::class,
@@ -176,6 +177,20 @@ abstract class TestCase extends Orchestra
         $app['config']->set('app.locale', 'en');
         $app['config']->set('translatable.fallback_locale', 'en');
         $app['config']->set('auth.providers.users.model', \Juzaweb\Modules\Core\Models\User::class);
+        $app['config']->set('firebase.projects.app', [
+            'credentials' => [
+                'type' => 'service_account',
+                'project_id' => 'juzaweb-test',
+                'private_key_id' => '1234567890',
+                'private_key' => '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQD\n-----END PRIVATE KEY-----\n',
+                'client_email' => 'firebase-adminsdk-12345@juzaweb-test.iam.gserviceaccount.com',
+                'client_id' => '1234567890',
+                'auth_uri' => 'https://accounts.google.com/o/oauth2/auth',
+                'token_uri' => 'https://oauth2.googleapis.com/token',
+                'auth_provider_x509_cert_url' => 'https://www.googleapis.com/oauth2/v1/certs',
+                'client_x509_cert_url' => 'https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-12345%40juzaweb-test.iam.gserviceaccount.com',
+            ],
+        ]);
     }
 
     /**
