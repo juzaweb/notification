@@ -30,12 +30,13 @@ class ChannelConfigController extends AdminController
 
     public function create()
     {
-        Breadcrumb::add(__('Channel Configs'), admin_url('channelconfigs'));
+        Breadcrumb::add(__('Channel Configs'), admin_url('channel-configs'));
 
         Breadcrumb::add(__('Create Channel Config'));
 
         $backUrl = action([static::class, 'index']);
         $channels = collect($this->notificationManager->getChannelsArray())
+            ->filter(fn ($item) => $item['config'] ?? false)
             ->map(fn ($item) => $item['label'])
             ->prepend('-- Select Channel --', '');
 
@@ -52,13 +53,14 @@ class ChannelConfigController extends AdminController
 
     public function edit(string $id)
     {
-        Breadcrumb::add(__('Channel Configs'), admin_url('channelconfigs'));
+        Breadcrumb::add(__('Channel Configs'), admin_url('channel-configs'));
 
         Breadcrumb::add(__('Create Channel Configs'));
 
         $model = ChannelConfig::findOrFail($id);
         $backUrl = action([static::class, 'index']);
         $channels = collect($this->notificationManager->getChannelsArray())
+            ->filter(fn ($item) => $item['config'] ?? false)
             ->map(fn ($item) => $item['label'])
             ->prepend('-- Select Channel --', '');
 

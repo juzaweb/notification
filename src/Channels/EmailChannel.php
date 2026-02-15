@@ -27,6 +27,7 @@ class EmailChannel implements NotificationChannelInterface
         return [
             'label' => $this->getLabel(),
             'description' => $this->getDescription(),
+            'config' => $this->getConfig(),
         ];
     }
 

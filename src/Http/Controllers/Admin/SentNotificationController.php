@@ -10,6 +10,7 @@ use Juzaweb\Modules\Notification\Http\DataTables\SentNotificationsDataTable;
 use Juzaweb\Modules\Notification\Http\Requests\SentNotificationActionsRequest;
 use Juzaweb\Modules\Notification\Http\Requests\SentNotificationRequest;
 use Juzaweb\Modules\Notification\Jobs\SendNotificationJob;
+use Juzaweb\Modules\Notification\Models\ChannelConfig;
 use Juzaweb\Modules\Notification\Models\SentNotification;
 
 class SentNotificationController extends AdminController
@@ -161,9 +162,16 @@ class SentNotificationController extends AdminController
     protected function getChannelsForCheckbox(): array
     {
         $channels = $this->notificationManager->getChannelsArray();
+        $configs = ChannelConfig::whereIn('channel_key', array_keys($channels))
+            ->pluck('channel_key')
+            ->toArray();
         $options = [];
 
         foreach ($channels as $key => $channel) {
+            if ($channel['config'] && !in_array($key, $configs)) {
+                continue;
+            }
+
             $options[$key] = $channel['label'];
         }
 
