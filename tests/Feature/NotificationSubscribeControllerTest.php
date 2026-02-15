@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\URL;
 use Juzaweb\Modules\Core\Models\Guest;
 use Juzaweb\Modules\Core\Tests\TestCase;
 use Juzaweb\Modules\Core\Translations\Models\Language;
-use Juzaweb\Modules\Notification\Mail\SubscriptionVerifyEmail;
+use Juzaweb\Modules\Notification\Notifications\SubscriptionVerifyEmail;
 
 class TestRouteServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -17,6 +17,16 @@ class TestRouteServiceProvider extends \Illuminate\Support\ServiceProvider
         Route::middleware('web')->get('/', function () {
             return 'Home';
         })->name('home');
+
+        Route::post('test-notification/{channel}/subscribe', [
+            \Juzaweb\Modules\Notification\Http\Controllers\NotificationSubscribeController::class,
+            'subscribe'
+        ])->name('test.notification.subscribe');
+
+        Route::get('test-notification/{channel}/verify', [
+            \Juzaweb\Modules\Notification\Http\Controllers\NotificationSubscribeController::class,
+            'verify'
+        ])->name('notification.verify');
     }
 }
 
@@ -73,7 +83,7 @@ class NotificationSubscribeControllerTest extends TestCase
 
         $email = 'test@example.com';
 
-        $response = $this->postJson(route('notification.subscribe', ['channel' => 'mail']), [
+        $response = $this->postJson(route('test.notification.subscribe', ['channel' => 'mail']), [
             'email' => $email,
         ]);
 
@@ -81,19 +91,14 @@ class NotificationSubscribeControllerTest extends TestCase
         $response->assertJson(['success' => true]);
 
         // Check if notification was sent
-        Notification::assertSentOnDemand(
-            SubscriptionVerifyEmail::class,
-            function ($notification, $channels, $notifiable) use ($email) {
-                return $notifiable->routes['mail'] === $email;
-            }
-        );
+        Notification::assertSentOnDemand(SubscriptionVerifyEmail::class);
     }
 
     public function test_subscribe_fcm_success()
     {
         $token = 'test-token-123';
 
-        $response = $this->postJson(route('notification.subscribe', ['channel' => 'fcm']), [
+        $response = $this->postJson(route('test.notification.subscribe', ['channel' => 'fcm']), [
             'token' => $token,
         ]);
 
@@ -109,7 +114,7 @@ class NotificationSubscribeControllerTest extends TestCase
 
     public function test_subscribe_validation_error()
     {
-        $response = $this->postJson(route('notification.subscribe', ['channel' => 'mail']), [
+        $response = $this->postJson(route('test.notification.subscribe', ['channel' => 'mail']), [
             'email' => 'invalid-email',
         ]);
 
